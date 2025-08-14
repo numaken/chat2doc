@@ -15,12 +15,30 @@ interface StructuredData {
   concerns?: string[]
 }
 
+// セキュリティ保護: APIキーチェック
+const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_SHARED
+
+if (!apiKey || apiKey === 'disabled_for_security_reasons') {
+  console.warn('🛡️ OpenAI API無効化 - セキュリティ保護中')
+}
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_SHARED,
+  apiKey: apiKey || 'disabled',
 })
 
 export async function POST(request: NextRequest) {
   try {
+    // セキュリティチェック: APIキーが無効な場合はサービス停止
+    if (!apiKey || apiKey === 'disabled_for_security_reasons' || apiKey === 'disabled') {
+      return NextResponse.json(
+        { 
+          error: 'サービス一時停止中です。認証システム実装後に再開予定です。',
+          code: 'SERVICE_TEMPORARILY_DISABLED'
+        },
+        { status: 503 }
+      )
+    }
+
     const { conversationText } = await request.json()
 
     if (!conversationText || !conversationText.trim()) {
