@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
+interface StructuredData {
+  purpose: string
+  progress: string[]
+  challenges: string[]
+  nextActions: string[]
+  code?: Array<{
+    fileName?: string
+    description?: string
+    snippet?: string
+  }>
+  intentions?: string[]
+  concerns?: string[]
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_SHARED,
 })
@@ -79,7 +93,7 @@ export async function POST(request: NextRequest) {
       console.log(`🔄 ${chunks.length} チャンクに分割しました`)
       
       // 各チャンクを順番に処理
-      const chunkResults = []
+      const chunkResults: StructuredData[] = []
       for (let i = 0; i < chunks.length; i++) {
         console.log(`⚡ チャンク ${i + 1}/${chunks.length} を処理中...`)
         
@@ -104,8 +118,13 @@ export async function POST(request: NextRequest) {
           try {
             const jsonMatch = chunkContent.match(/```json\s*([\s\S]*?)\s*```/)
             const jsonString = jsonMatch ? jsonMatch[1] : chunkContent
-            const chunkData = JSON.parse(jsonString.trim())
-            chunkResults.push(chunkData)
+            const chunkData = JSON.parse(jsonString.trim()) as StructuredData
+            
+            // 必要なプロパティが存在することを確認
+            if (chunkData.purpose && Array.isArray(chunkData.progress) && 
+                Array.isArray(chunkData.challenges) && Array.isArray(chunkData.nextActions)) {
+              chunkResults.push(chunkData)
+            }
             console.log(`✅ チャンク ${i + 1} 処理完了`)
           } catch (parseError) {
             console.error(`❌ チャンク ${i + 1} の解析エラー:`, parseError)
@@ -115,7 +134,7 @@ export async function POST(request: NextRequest) {
       
       // 結果をマージ
       console.log(`🔗 ${chunkResults.length} チャンクの結果をマージ中...`)
-      const mergedResult = {
+      const mergedResult: StructuredData = {
         purpose: chunkResults[0]?.purpose || "複数の会話チャンクから抽出されたプロジェクト",
         progress: [],
         challenges: [],
@@ -190,13 +209,13 @@ export async function POST(request: NextRequest) {
     }
 
     // JSONの抽出を試みる（```json ``` で囲まれている場合に対応）
-    let structuredData
+    let structuredData: StructuredData
     try {
       // JSONブロックを抽出
       const jsonMatch = responseContent.match(/```json\s*([\s\S]*?)\s*```/)
       const jsonString = jsonMatch ? jsonMatch[1] : responseContent
       
-      structuredData = JSON.parse(jsonString.trim())
+      structuredData = JSON.parse(jsonString.trim()) as StructuredData
       
       // 必要なプロパティが存在することを確認
       if (!structuredData.purpose || !Array.isArray(structuredData.progress) || 
@@ -213,7 +232,10 @@ export async function POST(request: NextRequest) {
         purpose: "会話ログの構造化が部分的に完了しました",
         progress: ["AIによる会話分析を実行"],
         challenges: ["JSON形式での完全な構造化に課題が発生"],
-        nextActions: ["手動での構造化結果の確認と調整が必要"]
+        nextActions: ["手動での構造化結果の確認と調整が必要"],
+        code: [],
+        intentions: [],
+        concerns: []
       }
     }
 
