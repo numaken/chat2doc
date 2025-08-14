@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import OpenAI from 'openai'
+import { UsageManager } from '@/lib/usageManager'
 
 interface StructuredData {
   purpose: string
@@ -31,13 +32,27 @@ export async function POST(request: NextRequest) {
   try {
     // 認証チェック: ログインユーザーのみAPIアクセス可能
     const session = await getServerSession()
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json(
         { 
           error: 'ログインが必要です。認証後に再度お試しください。',
           code: 'AUTHENTICATION_REQUIRED'
         },
         { status: 401 }
+      )
+    }
+
+    // 使用量制限チェック
+    const usageCheck = UsageManager.canUseService(session.user.id, session.user.email)
+    if (!usageCheck.canUse) {
+      return NextResponse.json(
+        { 
+          error: usageCheck.message,
+          code: 'USAGE_LIMIT_EXCEEDED',
+          usage: usageCheck.usage,
+          remainingCount: usageCheck.remainingCount
+        },
+        { status: 429 } // Too Many Requests
       )
     }
 
@@ -202,6 +217,17 @@ export async function POST(request: NextRequest) {
         intentionsCount: mergedResult.intentions?.length || 0,
         concernsCount: mergedResult.concerns?.length || 0
       })
+
+      // 使用量を記録（チャンク処理成功時のみ）
+      const updatedUsage = UsageManager.recordUsage(session.user.id, session.user.email)
+      console.log('📊 使用量記録 (チャンク処理):', {
+        userId: session.user.id,
+        email: session.user.email,
+        count: updatedUsage.count,
+        plan: updatedUsage.plan,
+        chunks: chunks.length,
+        remainingCount: UsageManager.canUseService(session.user.id, session.user.email).remainingCount
+      })
       
       return NextResponse.json({
         success: true,
@@ -211,6 +237,11 @@ export async function POST(request: NextRequest) {
           chunks: chunks.length,
           totalChars: fullText.length,
           timestamp: new Date().toISOString()
+        },
+        usage: {
+          count: updatedUsage.count,
+          plan: updatedUsage.plan,
+          remainingCount: UsageManager.canUseService(session.user.id, session.user.email).remainingCount
         }
       })
     }
@@ -283,6 +314,16 @@ export async function POST(request: NextRequest) {
       concernsCount: structuredData.concerns?.length || 0
     })
 
+    // 使用量を記録（成功時のみ）
+    const updatedUsage = UsageManager.recordUsage(session.user.id, session.user.email)
+    console.log('📊 使用量記録:', {
+      userId: session.user.id,
+      email: session.user.email,
+      count: updatedUsage.count,
+      plan: updatedUsage.plan,
+      remainingCount: UsageManager.canUseService(session.user.id, session.user.email).remainingCount
+    })
+
     // トークン使用量をログ出力
     console.log('💰 トークン使用量:', {
       prompt: completion.usage?.prompt_tokens,
@@ -297,6 +338,11 @@ export async function POST(request: NextRequest) {
         model: 'gpt-3.5-turbo',
         tokens: completion.usage?.total_tokens,
         timestamp: new Date().toISOString()
+      },
+      usage: {
+        count: updatedUsage.count,
+        plan: updatedUsage.plan,
+        remainingCount: UsageManager.canUseService(session.user.id, session.user.email).remainingCount
       }
     })
 

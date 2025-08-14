@@ -7,6 +7,7 @@ import Header from '@/components/Header'
 import ProjectSidebar from '@/components/ProjectSidebar'
 import ConversationInput from '@/components/ConversationInput'
 import CurrentStatePanel from '@/components/CurrentStatePanel'
+import UsageIndicator from '@/components/UsageIndicator'
 
 interface Conversation {
   id: string
@@ -132,6 +133,9 @@ export default function AppPage() {
         {/* メインエリア: 会話入力 */}
         <main className="flex-1 flex">
           <div className="flex-1 p-6">
+            {/* 使用量表示 */}
+            <UsageIndicator />
+            
             {activeProject ? (
               <ConversationInput 
                 projectId={activeProject}
