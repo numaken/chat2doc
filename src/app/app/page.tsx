@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FileText, MessageSquare, Users, Bot } from 'lucide-react'
+import { useSession, signIn } from 'next-auth/react'
+import { FileText, MessageSquare, Users, Bot, Shield } from 'lucide-react'
 import Header from '@/components/Header'
 import ProjectSidebar from '@/components/ProjectSidebar'
 import ConversationInput from '@/components/ConversationInput'
@@ -35,6 +36,7 @@ interface Conversation {
 }
 
 export default function AppPage() {
+  const { data: session, status } = useSession()
   const [activeProject, setActiveProjectState] = useState<string | null>(null)
   const [conversations, setConversationsState] = useState<Conversation[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
@@ -77,6 +79,35 @@ export default function AppPage() {
     if (typeof window !== 'undefined') {
       localStorage.setItem('chat2doc_conversations', JSON.stringify(newConversations))
     }
+  }
+
+  // 認証チェック
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">読み込み中...</div>
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <Shield className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">ログインが必要です</h1>
+          <p className="text-gray-600 mb-6">
+            Chat2Docをご利用いただくには、Googleアカウントでのログインが必要です。
+          </p>
+          <button
+            onClick={() => signIn('google', { callbackUrl: '/app' })}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Google でログイン
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!isLoaded) {

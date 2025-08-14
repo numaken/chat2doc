@@ -36,25 +36,25 @@ export default function LandingPage() {
             ChatGPT・Claude・Gemini等との会話ログを構造化されたドキュメントに自動変換。<br />
             開発プロジェクトの引き継ぎ書・仕様書・議事録として活用できます。
           </p>
-          {/* サービス停止中の案内 */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+          {/* 認証導入の案内 */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-5 h-5 text-yellow-600" />
-              <span className="font-semibold text-yellow-800">サービス一時停止中</span>
+              <Shield className="w-5 h-5 text-blue-600" />
+              <span className="font-semibold text-blue-800">安全な認証システム導入</span>
             </div>
-            <p className="text-yellow-700 text-sm">
-              セキュリティ強化のため、認証システム実装中です。まもなく再開予定です。
+            <p className="text-blue-700 text-sm">
+              セキュリティ強化により、Googleアカウントでのログインが必要になりました。無料でご利用いただけます。
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button 
-              disabled 
-              className="bg-gray-400 text-white px-8 py-4 rounded-lg cursor-not-allowed flex items-center justify-center gap-2"
+            <Link 
+              href="/auth/signin" 
+              className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
             >
-              一時停止中
-              <Shield className="w-5 h-5" />
-            </button>
+              ログインして始める
+              <ArrowRight className="w-5 h-5" />
+            </Link>
             <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors">
               使用例を見る
             </button>

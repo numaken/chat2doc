@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import OpenAI from 'openai'
 
 interface StructuredData {
@@ -28,6 +29,18 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
+    // 認証チェック: ログインユーザーのみAPIアクセス可能
+    const session = await getServerSession()
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { 
+          error: 'ログインが必要です。認証後に再度お試しください。',
+          code: 'AUTHENTICATION_REQUIRED'
+        },
+        { status: 401 }
+      )
+    }
+
     // セキュリティチェック: APIキーが無効な場合はサービス停止
     if (!apiKey || apiKey === 'disabled_for_security_reasons' || apiKey === 'disabled') {
       return NextResponse.json(
