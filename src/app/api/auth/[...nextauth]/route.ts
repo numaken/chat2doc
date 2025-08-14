@@ -11,8 +11,8 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       // セッション情報をカスタマイズ
-      if (session.user) {
-        session.user.id = token.sub!
+      if (session.user && token.sub) {
+        (session.user as any).id = token.sub
       }
       return session
     },

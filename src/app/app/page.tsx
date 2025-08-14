@@ -36,7 +36,7 @@ interface Conversation {
 }
 
 export default function AppPage() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const [activeProject, setActiveProjectState] = useState<string | null>(null)
   const [conversations, setConversationsState] = useState<Conversation[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
