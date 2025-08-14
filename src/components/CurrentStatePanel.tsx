@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Target, CheckCircle, AlertTriangle, ArrowRight, Download, Copy, Code, Lightbulb, AlertCircle } from 'lucide-react'
 
 interface CurrentStatePanelProps {
@@ -73,7 +72,7 @@ ${structuredData.challenges?.map((item: string) => `- ${item}`).join('\n') || ''
 ${structuredData.nextActions?.map((item: string) => `- ${item}`).join('\n') || ''}
 
 ## 💻 コード
-${structuredData.code?.map((item: any) => `### ${item.fileName || 'コード'}
+${structuredData.code?.map((item: { fileName?: string; description?: string; snippet?: string }) => `### ${item.fileName || 'コード'}
 ${item.description || ''}
 \`\`\`
 ${item.snippet || ''}
