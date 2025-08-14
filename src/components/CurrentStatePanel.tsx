@@ -34,7 +34,7 @@ interface Conversation {
   timestamp: string
 }
 
-export default function CurrentStatePanel({ conversations }: CurrentStatePanelProps) {
+export default function CurrentStatePanel({ projectId, conversations }: CurrentStatePanelProps) {
   const latestConversation = conversations[conversations.length - 1]
   const structuredData = latestConversation?.structuredData
 
