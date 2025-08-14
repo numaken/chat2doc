@@ -149,24 +149,27 @@ export async function POST(request: NextRequest) {
         if (chunk.progress) mergedResult.progress.push(...chunk.progress)
         if (chunk.challenges) mergedResult.challenges.push(...chunk.challenges)
         if (chunk.nextActions) mergedResult.nextActions.push(...chunk.nextActions)
-        if (chunk.code) mergedResult.code.push(...chunk.code)
-        if (chunk.intentions) mergedResult.intentions.push(...chunk.intentions)
-        if (chunk.concerns) mergedResult.concerns.push(...chunk.concerns)
+        if (chunk.code && mergedResult.code) mergedResult.code.push(...chunk.code)
+        if (chunk.intentions && mergedResult.intentions) mergedResult.intentions.push(...chunk.intentions)
+        if (chunk.concerns && mergedResult.concerns) mergedResult.concerns.push(...chunk.concerns)
       })
       
       // 重複除去と整理
       mergedResult.progress = [...new Set(mergedResult.progress)]
       mergedResult.challenges = [...new Set(mergedResult.challenges)]
       mergedResult.nextActions = [...new Set(mergedResult.nextActions)]
-      mergedResult.intentions = [...new Set(mergedResult.intentions)]
-      mergedResult.concerns = [...new Set(mergedResult.concerns)]
+      if (mergedResult.intentions) mergedResult.intentions = [...new Set(mergedResult.intentions)]
+      if (mergedResult.concerns) mergedResult.concerns = [...new Set(mergedResult.concerns)]
       // codeは構造が異なるため重複除去しない
       
       console.log(`🎯 マージ完了:`, {
         purpose: mergedResult.purpose.substring(0, 50) + '...',
         progressCount: mergedResult.progress.length,
         challengesCount: mergedResult.challenges.length,
-        nextActionsCount: mergedResult.nextActions.length
+        nextActionsCount: mergedResult.nextActions.length,
+        codeCount: mergedResult.code?.length || 0,
+        intentionsCount: mergedResult.intentions?.length || 0,
+        concernsCount: mergedResult.concerns?.length || 0
       })
       
       return NextResponse.json({
@@ -243,7 +246,10 @@ export async function POST(request: NextRequest) {
       purpose: structuredData.purpose.substring(0, 50) + '...',
       progressCount: structuredData.progress.length,
       challengesCount: structuredData.challenges.length, 
-      nextActionsCount: structuredData.nextActions.length
+      nextActionsCount: structuredData.nextActions.length,
+      codeCount: structuredData.code?.length || 0,
+      intentionsCount: structuredData.intentions?.length || 0,
+      concernsCount: structuredData.concerns?.length || 0
     })
 
     // トークン使用量をログ出力
