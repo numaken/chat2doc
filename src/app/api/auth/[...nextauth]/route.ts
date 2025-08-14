@@ -1,6 +1,18 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
+// 型定義を拡張
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+  }
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -12,7 +24,7 @@ const handler = NextAuth({
     async session({ session, token }) {
       // セッション情報をカスタマイズ
       if (session.user && token.sub) {
-        (session.user as any).id = token.sub
+        session.user.id = token.sub
       }
       return session
     },
