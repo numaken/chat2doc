@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Shield, Zap, Crown } from 'lucide-react'
 import { UsageManager } from '@/lib/usageManager'
+import { useUpgrade } from '@/hooks/useUpgrade'
 
 interface UsageData {
   count: number
@@ -14,6 +15,7 @@ interface UsageData {
 export default function UsageIndicator() {
   const { data: session } = useSession()
   const [usage, setUsage] = useState<UsageData | null>(null)
+  const { upgradeToPremiuim, isLoading } = useUpgrade()
 
   useEffect(() => {
     if (session?.user?.id && session?.user?.email) {
@@ -51,8 +53,12 @@ export default function UsageIndicator() {
         </div>
         
         {!isPremium && (
-          <button className="text-sm bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full hover:from-blue-600 hover:to-purple-700 transition-colors">
-            アップグレード
+          <button 
+            onClick={upgradeToPremiuim}
+            disabled={isLoading}
+            className="text-sm bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full hover:from-blue-600 hover:to-purple-700 transition-colors disabled:opacity-50"
+          >
+            {isLoading ? '処理中...' : 'アップグレード'}
           </button>
         )}
       </div>

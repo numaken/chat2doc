@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Sparkles, FileText, AlertCircle } from 'lucide-react'
+import { Send, Sparkles, FileText, AlertCircle, Crown } from 'lucide-react'
+import UpgradeModal from './UpgradeModal'
+import { useUpgrade } from '@/hooks/useUpgrade'
 
 interface ConversationInputProps {
   projectId: string
@@ -44,6 +46,9 @@ export default function ConversationInput({
   const [inputText, setInputText] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState('')
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [usageInfo, setUsageInfo] = useState<any>(null)
+  const { upgradeToPremiuim } = useUpgrade()
 
   const processConversation = async () => {
     if (!inputText.trim()) return
@@ -67,6 +72,14 @@ export default function ConversationInput({
 
       if (!response.ok) {
         const errorData = await response.json()
+        
+        // 使用量制限の場合はアップグレードモーダル表示
+        if (response.status === 429 && errorData.code === 'USAGE_LIMIT_EXCEEDED') {
+          setUsageInfo(errorData.usage)
+          setShowUpgradeModal(true)
+          return
+        }
+        
         throw new Error(errorData.error || 'API呼び出しに失敗しました')
       }
 
@@ -181,6 +194,17 @@ ChatGPT: Twitter API v2を使用した自動投稿機能の実装について説
           </div>
         </div>
       )}
+
+      {/* アップグレードモーダル */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        currentUsage={usageInfo?.count || 0}
+        onUpgrade={() => {
+          setShowUpgradeModal(false)
+          upgradeToPremiuim()
+        }}
+      />
     </div>
   )
 }
