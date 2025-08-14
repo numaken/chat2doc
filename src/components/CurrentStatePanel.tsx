@@ -1,27 +1,43 @@
 'use client'
 
 import { useState } from 'react'
-import { Target, CheckCircle, AlertTriangle, ArrowRight, Download, Copy, Code, Lightbulb, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react'
+import { Target, CheckCircle, AlertTriangle, ArrowRight, Download, Copy, Code, Lightbulb, AlertCircle } from 'lucide-react'
 
 interface CurrentStatePanelProps {
   projectId: string
-  conversations: any[]
+  conversations: Conversation[]
 }
 
-export default function CurrentStatePanel({ projectId, conversations }: CurrentStatePanelProps) {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['purpose', 'progress', 'challenges', 'nextActions']))
+interface Conversation {
+  id: string
+  projectId: string
+  originalText: string
+  structuredData: {
+    purpose: string
+    progress: string[]
+    challenges: string[]
+    nextActions: string[]
+    code?: Array<{
+      fileName?: string
+      description?: string
+      snippet?: string
+    }>
+    intentions?: string[]
+    concerns?: string[]
+  }
+  metadata: {
+    model: string
+    tokens?: number
+    chunks?: number
+    totalChars?: number
+    timestamp: string
+  }
+  timestamp: string
+}
+
+export default function CurrentStatePanel({ conversations }: CurrentStatePanelProps) {
   const latestConversation = conversations[conversations.length - 1]
   const structuredData = latestConversation?.structuredData
-
-  const toggleSection = (section: string) => {
-    const newExpanded = new Set(expandedSections)
-    if (newExpanded.has(section)) {
-      newExpanded.delete(section)
-    } else {
-      newExpanded.add(section)
-    }
-    setExpandedSections(newExpanded)
-  }
 
   if (!structuredData) {
     return (
@@ -42,7 +58,7 @@ export default function CurrentStatePanel({ projectId, conversations }: CurrentS
   }
 
   const exportMarkdown = () => {
-    const markdown = `# ${projectId} - 現在地レポート
+    const markdown = `# プロジェクト - 現在地レポート
 
 ## 📌 目的
 ${structuredData.purpose}
@@ -179,7 +195,7 @@ ${structuredData.concerns?.map((item: string) => `- ${item}`).join('\n') || ''}
               <h3 className="font-semibold text-gray-900">コード</h3>
             </div>
             <div className="space-y-3">
-              {structuredData.code.map((item: any, index: number) => (
+              {structuredData.code.map((item: { fileName?: string; description?: string; snippet?: string }, index: number) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   {item.fileName && (
                     <div className="text-xs font-mono text-cyan-600 mb-1">{item.fileName}</div>

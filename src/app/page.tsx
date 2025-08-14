@@ -7,9 +7,36 @@ import ProjectSidebar from '@/components/ProjectSidebar'
 import ConversationInput from '@/components/ConversationInput'
 import CurrentStatePanel from '@/components/CurrentStatePanel'
 
+interface Conversation {
+  id: string
+  projectId: string
+  originalText: string
+  structuredData: {
+    purpose: string
+    progress: string[]
+    challenges: string[]
+    nextActions: string[]
+    code?: Array<{
+      fileName?: string
+      description?: string
+      snippet?: string
+    }>
+    intentions?: string[]
+    concerns?: string[]
+  }
+  metadata: {
+    model: string
+    tokens?: number
+    chunks?: number
+    totalChars?: number
+    timestamp: string
+  }
+  timestamp: string
+}
+
 export default function Home() {
   const [activeProject, setActiveProjectState] = useState<string | null>(null)
-  const [conversations, setConversationsState] = useState<any[]>([])
+  const [conversations, setConversationsState] = useState<Conversation[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
 
   // localStorageから会話データを読み込み
@@ -45,7 +72,7 @@ export default function Home() {
   }
 
   // 会話データをlocalStorageに保存
-  const setConversations = (newConversations: any[]) => {
+  const setConversations = (newConversations: Conversation[]) => {
     setConversationsState(newConversations)
     if (typeof window !== 'undefined') {
       localStorage.setItem('chat2doc_conversations', JSON.stringify(newConversations))

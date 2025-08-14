@@ -5,8 +5,35 @@ import { Send, Sparkles, FileText, AlertCircle } from 'lucide-react'
 
 interface ConversationInputProps {
   projectId: string
-  conversations: any[]
-  setConversations: (conversations: any[]) => void
+  conversations: Conversation[]
+  setConversations: (conversations: Conversation[]) => void
+}
+
+interface Conversation {
+  id: string
+  projectId: string
+  originalText: string
+  structuredData: {
+    purpose: string
+    progress: string[]
+    challenges: string[]
+    nextActions: string[]
+    code?: Array<{
+      fileName?: string
+      description?: string
+      snippet?: string
+    }>
+    intentions?: string[]
+    concerns?: string[]
+  }
+  metadata: {
+    model: string
+    tokens?: number
+    chunks?: number
+    totalChars?: number
+    timestamp: string
+  }
+  timestamp: string
 }
 
 export default function ConversationInput({ 
