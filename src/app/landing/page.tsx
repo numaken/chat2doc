@@ -26,46 +26,46 @@ export default function LandingPage() {
       </header>
 
       {/* ヒーローセクション */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20">
+      <section className="bg-gradient-to-b from-blue-50 to-white py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            AI会話を<br />
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
+            AI会話を<br className="hidden sm:block" />
             <span className="text-blue-600">知識資産</span>に変換
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            ChatGPT・Claude・Gemini等との会話ログを構造化されたドキュメントに自動変換。<br />
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
+            ChatGPT・Claude・Gemini等との会話ログを構造化されたドキュメントに自動変換。<br className="hidden md:block" />
             開発プロジェクトの引き継ぎ書・仕様書・議事録として活用できます。
           </p>
           {/* 認証導入の案内 */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-6 sm:mb-8 max-w-2xl mx-auto mx-4">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-5 h-5 text-blue-600" />
-              <span className="font-semibold text-blue-800">安全な認証システム導入</span>
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
+              <span className="font-semibold text-blue-800 text-sm sm:text-base">安全な認証システム導入</span>
             </div>
-            <p className="text-blue-700 text-sm">
+            <p className="text-blue-700 text-xs sm:text-sm">
               セキュリティ強化により、Googleアカウントでのログインが必要になりました。無料でご利用いただけます。
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
             <Link 
               href="/auth/signin" 
-              className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              className="bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               ログインして始める
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
-            <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="border border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
               使用例を見る
             </button>
           </div>
           
           {/* デモ画像エリア */}
-          <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl mx-auto">
-            <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-4xl mx-auto mx-4">
+            <div className="bg-gray-100 rounded-lg h-48 sm:h-64 flex items-center justify-center">
               <div className="text-center">
-                <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Chat2Doc インターフェース デモ</p>
+                <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                <p className="text-gray-500 text-sm sm:text-base">Chat2Doc インターフェース デモ</p>
               </div>
             </div>
           </div>
@@ -73,9 +73,9 @@ export default function LandingPage() {
       </section>
 
       {/* 問題・解決セクション */}
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
                 こんな課題はありませんか？

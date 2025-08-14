@@ -14,7 +14,7 @@ export default function UpgradeModal({ isOpen, onClose, currentUsage, onUpgrade 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+      <div className="bg-white rounded-lg max-w-md w-full p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
         {/* クローズボタン */}
         <button
           onClick={onClose}
@@ -24,14 +24,14 @@ export default function UpgradeModal({ isOpen, onClose, currentUsage, onUpgrade 
         </button>
 
         {/* ヘッダー */}
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Crown className="w-8 h-8 text-white" />
+        <div className="text-center mb-4 sm:mb-6">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <Crown className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             月間利用制限に達しました
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             今月{currentUsage}回ご利用いただき、無料枠（5回）を使い切りました。
           </p>
         </div>

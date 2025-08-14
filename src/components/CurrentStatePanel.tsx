@@ -101,7 +101,7 @@ ${structuredData.concerns?.map((item: string) => `- ${item}`).join('\n') || ''}
   }
 
   return (
-    <div className="w-96 bg-white border-l border-gray-200 flex flex-col">
+    <div className="w-full xl:w-96 bg-white flex flex-col">
       {/* ヘッダー */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -126,7 +126,7 @@ ${structuredData.concerns?.map((item: string) => `- ${item}`).join('\n') || ''}
       </div>
 
       {/* メインコンテンツ */}
-      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-3 sm:p-4 space-y-4 sm:space-y-6 overflow-y-auto">
         {/* 目的セクション */}
         <div>
           <div className="flex items-center gap-2 mb-3">

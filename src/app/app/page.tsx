@@ -123,16 +123,18 @@ export default function AppPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="flex h-[calc(100vh-64px)]">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)]">
         {/* 左サイドバー: プロジェクト管理 */}
-        <ProjectSidebar 
-          activeProject={activeProject}
-          setActiveProject={setActiveProject}
-        />
+        <div className="lg:w-80 border-b lg:border-b-0 lg:border-r border-gray-200">
+          <ProjectSidebar 
+            activeProject={activeProject}
+            setActiveProject={setActiveProject}
+          />
+        </div>
         
         {/* メインエリア: 会話入力 */}
-        <main className="flex-1 flex">
-          <div className="flex-1 p-6">
+        <main className="flex-1 flex flex-col xl:flex-row min-h-0">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
             {/* 使用量表示 */}
             <UsageIndicator />
             
@@ -149,10 +151,12 @@ export default function AppPage() {
           
           {/* 右サイドバー: 現在地パネル */}
           {activeProject && (
-            <CurrentStatePanel 
-              projectId={activeProject}
-              conversations={conversations}
-            />
+            <div className="xl:w-96 border-t xl:border-t-0 xl:border-l border-gray-200">
+              <CurrentStatePanel 
+                projectId={activeProject}
+                conversations={conversations}
+              />
+            </div>
           )}
         </main>
       </div>

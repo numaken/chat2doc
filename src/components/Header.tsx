@@ -10,34 +10,43 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-      <div className="flex items-center gap-3">
-        <Link href="/" className="flex items-center gap-3">
-          <MessageSquare className="w-8 h-8 text-blue-600" />
+    <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3">
+          <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Chat2Doc</h1>
-            <span className="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-medium">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Chat2Doc</h1>
+            <span className="text-xs bg-red-100 text-red-800 px-1.5 sm:px-2 py-0.5 rounded-full font-medium">
               β版
             </span>
           </div>
         </Link>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {session ? (
           <>
             <Link 
               href="/dashboard" 
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
+              className="hidden sm:flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
             >
               <BarChart3 className="w-4 h-4" />
               <span className="text-sm">ダッシュボード</span>
             </Link>
             
+            {/* モバイル用ダッシュボードアイコン */}
+            <Link 
+              href="/dashboard" 
+              className="sm:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              title="ダッシュボード"
+            >
+              <BarChart3 className="w-5 h-5" />
+            </Link>
+            
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 px-2 sm:px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
               >
                 {session.user?.image ? (
                   <img 
@@ -48,7 +57,7 @@ export default function Header() {
                 ) : (
                   <User className="w-4 h-4" />
                 )}
-                <span className="text-sm">{session.user?.name}</span>
+                <span className="text-sm hidden sm:block">{session.user?.name}</span>
               </button>
 
               {showUserMenu && (
