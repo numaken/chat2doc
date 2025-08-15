@@ -238,17 +238,17 @@ export default function ProjectSidebar({ activeProject, setActiveProject }: Proj
                     activeProject === project.id ? 'text-blue-600' : 'text-gray-400'
                   }`} />
                   <div className="flex-1 min-w-0">
-                    <h3 className={`font-medium truncate ${
+                    <h3 className={`font-medium text-sm sm:text-base leading-tight ${
                       activeProject === project.id ? 'text-blue-900' : 'text-gray-900'
-                    }`}>
-                      {project.name}
+                    }`} title={project.name}>
+                      {project.name.length > 20 ? `${project.name.substring(0, 20)}...` : project.name}
                     </h3>
-                    <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1 text-xs text-gray-500">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {project.lastUpdated}
+                        <span className="truncate">{project.lastUpdated}</span>
                       </div>
-                      <span>{project.conversationCount}件の会話</span>
+                      <span className="whitespace-nowrap">{project.conversationCount}件の会話</span>
                     </div>
                   </div>
                 </div>

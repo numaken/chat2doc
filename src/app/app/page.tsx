@@ -125,7 +125,7 @@ export default function AppPage() {
       
       <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)]">
         {/* 左サイドバー: プロジェクト管理 */}
-        <div className="lg:w-80 border-b lg:border-b-0 lg:border-r border-gray-200">
+        <div className="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-gray-200">
           <ProjectSidebar 
             activeProject={activeProject}
             setActiveProject={setActiveProject}
@@ -166,39 +166,39 @@ export default function AppPage() {
 
 function WelcomeScreen() {
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="text-center max-w-lg">
-        <div className="mb-8">
-          <MessageSquare className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="flex items-center justify-center h-full p-4">
+      <div className="text-center max-w-2xl">
+        <div className="mb-6 sm:mb-8">
+          <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-blue-500 mx-auto mb-3 sm:mb-4" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Chat2Doc へようこそ
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
             AIとの会話を構造化されたドキュメントに変換し、プロジェクトの知識資産として活用しましょう
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <FileText className="w-8 h-8 text-green-500 mb-2" />
-            <h3 className="font-semibold mb-1">構造化</h3>
-            <p className="text-sm text-gray-600">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="p-3 sm:p-4 bg-white rounded-lg shadow-sm border">
+            <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mb-2 mx-auto sm:mx-0" />
+            <h3 className="font-semibold mb-1 text-sm sm:text-base">構造化</h3>
+            <p className="text-xs sm:text-sm text-gray-600">
               会話を目的・課題・履歴に自動分類
             </p>
           </div>
           
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <Users className="w-8 h-8 text-purple-500 mb-2" />
-            <h3 className="font-semibold mb-1">継続性</h3>
-            <p className="text-sm text-gray-600">
+          <div className="p-3 sm:p-4 bg-white rounded-lg shadow-sm border">
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 mb-2 mx-auto sm:mx-0" />
+            <h3 className="font-semibold mb-1 text-sm sm:text-base">継続性</h3>
+            <p className="text-xs sm:text-sm text-gray-600">
               プロジェクトの現在地を常に把握
             </p>
           </div>
           
-          <div className="p-4 bg-white rounded-lg shadow-sm border">
-            <Bot className="w-8 h-8 text-blue-500 mb-2" />
-            <h3 className="font-semibold mb-1">AI連携</h3>
-            <p className="text-sm text-gray-600">
+          <div className="p-3 sm:p-4 bg-white rounded-lg shadow-sm border">
+            <Bot className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mb-2 mx-auto sm:mx-0" />
+            <h3 className="font-semibold mb-1 text-sm sm:text-base">AI連携</h3>
+            <p className="text-xs sm:text-sm text-gray-600">
               文脈を理解したAI支援の継続
             </p>
           </div>
