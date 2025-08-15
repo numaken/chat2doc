@@ -21,8 +21,16 @@ export function useUpgrade() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        console.error('❌ API エラー:', response.status, errorData)
+        console.error('❌ API エラー:', response.status)
+        let errorData;
+        try {
+          const responseText = await response.text()
+          console.error('レスポンステキスト:', responseText)
+          errorData = responseText ? JSON.parse(responseText) : {}
+        } catch (parseError) {
+          console.error('JSON パースエラー:', parseError)
+          throw new Error(`サーバーエラー (${response.status}): レスポンス解析失敗`)
+        }
         throw new Error(errorData.error || '決済処理の初期化に失敗しました')
       }
 

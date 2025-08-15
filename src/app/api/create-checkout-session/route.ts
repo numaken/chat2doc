@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
   
   try {
     // 認証チェック
+    console.log('🔍 認証確認中...')
     const session = await getServerSession()
     console.log('👤 セッション情報:', { 
       hasSession: !!session, 
@@ -22,7 +23,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { priceId = STRIPE_CONFIG.premium.priceId } = await request.json()
+    console.log('📄 リクエストボディ解析中...')
+    let priceId = STRIPE_CONFIG.premium.priceId
+    try {
+      const body = await request.json()
+      priceId = body.priceId || STRIPE_CONFIG.premium.priceId
+    } catch (parseError) {
+      console.log('ℹ️ リクエストボディが空、デフォルトpriceIdを使用')
+    }
     console.log('💰 使用価格ID:', priceId)
 
     // Stripe Checkout セッション作成
@@ -65,9 +73,17 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('❌ Stripe checkout session 作成失敗:', error)
+    console.error('❌ Stripe checkout session 作成失敗:')
+    console.error('Error details:', error)
+    console.error('Error stack:', (error as Error).stack)
+    
+    const errorMessage = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: '決済処理の初期化に失敗しました。詳細: ' + (error as Error).message },
+      { 
+        error: '決済処理の初期化に失敗しました',
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     )
   }
