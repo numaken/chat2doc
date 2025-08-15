@@ -67,9 +67,14 @@ export async function POST(request: NextRequest) {
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
         
-        if (invoice.subscription && invoice.billing_reason === 'subscription_cycle') {
+        // subscriptionはstring | Stripe.Subscription | nullの可能性がある
+        const subscriptionId = typeof invoice.subscription === 'string' 
+          ? invoice.subscription 
+          : invoice.subscription?.id || null
+          
+        if (subscriptionId && invoice.billing_reason === 'subscription_cycle') {
           console.log('💰 サブスクリプション更新成功:', {
-            subscriptionId: invoice.subscription,
+            subscriptionId: subscriptionId,
             amount: invoice.amount_paid,
             currency: invoice.currency
           })
@@ -80,8 +85,12 @@ export async function POST(request: NextRequest) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
         
+        const subscriptionId = typeof invoice.subscription === 'string' 
+          ? invoice.subscription 
+          : invoice.subscription?.id || null
+          
         console.log('❌ 決済失敗:', {
-          subscriptionId: invoice.subscription,
+          subscriptionId: subscriptionId,
           customerEmail: invoice.customer_email
         })
         break
