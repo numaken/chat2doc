@@ -14,6 +14,26 @@ function PaymentSuccessContent() {
     const session_id = searchParams.get('session_id')
     setSessionId(session_id)
 
+    // 決済成功時にプレミアムプランに自動更新
+    if (session_id) {
+      try {
+        const currentMonth = new Date().toISOString().substring(0, 7)
+        const usageData = JSON.parse(localStorage.getItem('chat2doc_usage') || '{}')
+        
+        // 全ユーザーのプランをプレミアムに更新（現在のユーザーを特定）
+        Object.keys(usageData).forEach(key => {
+          if (key.endsWith(`-${currentMonth}`)) {
+            usageData[key].plan = 'premium'
+            console.log('✅ 決済成功: プレミアムプランに自動更新', key)
+          }
+        })
+        
+        localStorage.setItem('chat2doc_usage', JSON.stringify(usageData))
+      } catch (error) {
+        console.error('プレミアムプラン更新エラー:', error)
+      }
+    }
+
     // 5秒後に自動でアプリページにリダイレクト
     const timer = setTimeout(() => {
       router.push('/app')
