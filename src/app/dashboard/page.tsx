@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { BarChart, TrendingUp, Crown, Calendar, DollarSign, ArrowLeft } from 'lucide-react'
+import { BarChart, TrendingUp, Crown, Calendar, DollarSign, ArrowLeft, Settings, CreditCard, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 
 interface UserStats {
@@ -155,7 +155,7 @@ export default function Dashboard() {
         </div>
 
         {/* 詳細情報 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="bg-white rounded-lg shadow">
             <div className="p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">利用状況</h3>
@@ -204,6 +204,74 @@ export default function Dashboard() {
                     {session?.user?.id?.substring(0, 12)}...
                   </span>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* サブスクリプション管理 */}
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+                サブスクリプション管理
+              </h3>
+              <div className="space-y-4">
+                {stats?.plan === 'premium' ? (
+                  <>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Crown className="w-4 h-4 text-yellow-600" />
+                        <span className="text-sm font-medium text-yellow-800">プレミアムプラン</span>
+                      </div>
+                      <p className="text-xs text-yellow-700">
+                        無制限でChat2Docをご利用いただけます
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => window.open('https://billing.stripe.com/p/login/test_bIYfZ04SYbNE1IQeUU', '_blank')}
+                        className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        請求情報を管理
+                      </button>
+                      <Link
+                        href="/subscription/cancel"
+                        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors text-sm"
+                      >
+                        <AlertTriangle className="w-4 h-4" />
+                        サブスクリプションを解約
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <BarChart className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">無料プラン</span>
+                      </div>
+                      <p className="text-xs text-blue-700">
+                        月5回まで利用可能です
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        // アップグレードボタンの処理
+                        const upgradeButton = document.querySelector('.upgrade-button') as HTMLButtonElement
+                        if (upgradeButton) {
+                          upgradeButton.click()
+                        } else {
+                          window.location.href = '/app'
+                        }
+                      }}
+                      className="w-full flex items-center justify-center gap-2 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
+                    >
+                      <Crown className="w-4 h-4" />
+                      プレミアムにアップグレード
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -53,14 +53,40 @@ export async function POST(request: NextRequest) {
         if (subscription.metadata?.userId && subscription.metadata?.email) {
           console.log('❌ サブスクリプション終了:', {
             userId: subscription.metadata.userId,
-            email: subscription.metadata.email
+            email: subscription.metadata.email,
+            subscriptionId: subscription.id,
+            canceledAt: subscription.canceled_at
           })
 
           // プレミアムプランを無料プランにダウングレード
-          const usage = UsageManager.getUserUsage(subscription.metadata.userId, subscription.metadata.email)
-          usage.plan = 'free'
+          UsageManager.downgradeToFree(subscription.metadata.userId, subscription.metadata.email)
           
           console.log('📉 無料プランにダウングレード完了')
+        } else {
+          console.log('⚠️ サブスクリプション削除イベントにメタデータが不足:', {
+            subscriptionId: subscription.id,
+            customerId: subscription.customer
+          })
+        }
+        break
+      }
+
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription
+        
+        if (subscription.cancel_at_period_end) {
+          console.log('⏰ サブスクリプション解約予定:', {
+            subscriptionId: subscription.id,
+            customerId: subscription.customer,
+            cancelAt: subscription.cancel_at || subscription.current_period_end
+          })
+          // 解約予定の場合は特別な処理は不要（期間終了まで継続）
+        } else if (subscription.status === 'active') {
+          console.log('🔄 サブスクリプション再開:', {
+            subscriptionId: subscription.id,
+            customerId: subscription.customer
+          })
+          // 再開された場合の処理（必要に応じて）
         }
         break
       }

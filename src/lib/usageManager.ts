@@ -84,6 +84,15 @@ export class UsageManager {
     return usage
   }
 
+  // ユーザーのプランをフリーにダウングレード
+  static downgradeToFree(userId: string, email: string): UserUsage {
+    const usage = this.getUserUsage(userId, email)
+    usage.plan = 'free'
+    usage.lastUsed = new Date().toISOString()
+    this.saveUserUsage(usage)
+    return usage
+  }
+
   // 全使用量データを取得
   private static getAllUsageData(): Record<string, UserUsage> {
     if (typeof window === 'undefined') return {}
