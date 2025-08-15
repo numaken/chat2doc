@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
           console.log('⏰ サブスクリプション解約予定:', {
             subscriptionId: subscription.id,
             customerId: subscription.customer,
-            cancelAt: subscription.cancel_at || subscription.current_period_end
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            cancelAt: subscription.cancel_at || (subscription as any).current_period_end
           })
           // 解約予定の場合は特別な処理は不要（期間終了まで継続）
         } else if (subscription.status === 'active') {
