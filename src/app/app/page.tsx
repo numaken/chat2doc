@@ -125,7 +125,7 @@ export default function AppPage() {
       
       <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)]">
         {/* 左サイドバー: プロジェクト管理 */}
-        <div className="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-gray-200">
+        <div className="lg:w-80 border-b lg:border-b-0 lg:border-r border-gray-200">
           <ProjectSidebar 
             activeProject={activeProject}
             setActiveProject={setActiveProject}
