@@ -129,7 +129,8 @@ export async function POST(request: NextRequest) {
       subscriptionId: canceledSubscription.id,
       cancelAtPeriodEnd: canceledSubscription.cancel_at_period_end,
       canceledAt: canceledSubscription.canceled_at,
-      currentPeriodEnd: canceledSubscription.current_period_end
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      currentPeriodEnd: (canceledSubscription as any).current_period_end
     })
 
     const responseData = {
@@ -141,9 +142,11 @@ export async function POST(request: NextRequest) {
       cancelationType,
       cancelAtPeriodEnd: canceledSubscription.cancel_at_period_end,
       canceledAt: canceledSubscription.canceled_at,
-      currentPeriodEnd: canceledSubscription.current_period_end,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      currentPeriodEnd: (canceledSubscription as any).current_period_end,
       // 日付を分かりやすい形式で追加
-      periodEndDate: new Date(canceledSubscription.current_period_end * 1000).toLocaleDateString('ja-JP', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      periodEndDate: new Date((canceledSubscription as any).current_period_end * 1000).toLocaleDateString('ja-JP', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
