@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { BarChart, TrendingUp, Crown, Clock, Calendar, DollarSign, ArrowLeft } from 'lucide-react'
+import { BarChart, TrendingUp, Crown, Calendar, DollarSign, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 interface UserStats {

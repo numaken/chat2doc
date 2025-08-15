@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { UsageManager } from '@/lib/usageManager'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // 認証チェック
     const session = await getServerSession()

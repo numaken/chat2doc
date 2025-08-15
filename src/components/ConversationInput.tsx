@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Sparkles, FileText, AlertCircle, Crown } from 'lucide-react'
+import { Send, Sparkles, FileText, AlertCircle } from 'lucide-react'
 import UpgradeModal from './UpgradeModal'
 import { useUpgrade } from '@/hooks/useUpgrade'
 
@@ -47,7 +47,7 @@ export default function ConversationInput({
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState('')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const [usageInfo, setUsageInfo] = useState<any>(null)
+  const [usageInfo, setUsageInfo] = useState<{ count: number; plan: string } | null>(null)
   const { upgradeToPremiuim } = useUpgrade()
 
   const processConversation = async () => {

@@ -3,6 +3,7 @@
 import { MessageSquare, BarChart3, User, LogOut } from 'lucide-react'
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 
 export default function Header() {
@@ -49,9 +50,11 @@ export default function Header() {
                 className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 px-2 sm:px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
               >
                 {session.user?.image ? (
-                  <img 
+                  <Image 
                     src={session.user.image} 
                     alt={session.user.name || ''} 
+                    width={24}
+                    height={24}
                     className="w-6 h-6 rounded-full"
                   />
                 ) : (
