@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { stripe, STRIPE_CONFIG } from '@/lib/stripe'
+import { getStripeInstance, STRIPE_CONFIG } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
     const { priceId = STRIPE_CONFIG.premium.priceId } = await request.json()
 
     // Stripe Checkout セッション作成
+    const stripe = getStripeInstance()
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],

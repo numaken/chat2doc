@@ -1,10 +1,23 @@
 import Stripe from 'stripe'
 import { loadStripe } from '@stripe/stripe-js'
 
-// Server-side Stripe instance
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy', {
-  apiVersion: '2025-07-30.basil',
-})
+// Server-side Stripe instance with proper error handling
+let stripe: Stripe | null = null
+
+export function getStripeInstance(): Stripe {
+  if (!stripe) {
+    const secretKey = process.env.STRIPE_SECRET_KEY
+    if (!secretKey) {
+      throw new Error('STRIPE_SECRET_KEY is not configured')
+    }
+    
+    stripe = new Stripe(secretKey, {
+      apiVersion: '2025-07-30.basil',
+    })
+  }
+  
+  return stripe
+}
 
 // Client-side Stripe instance
 export const getStripe = () => {
