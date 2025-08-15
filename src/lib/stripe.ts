@@ -7,6 +7,13 @@ let stripe: Stripe | null = null
 export function getStripeInstance(): Stripe {
   if (!stripe) {
     const secretKey = process.env.STRIPE_SECRET_KEY
+    console.log('🔐 Stripe 設定確認:', {
+      hasSecretKey: !!secretKey,
+      secretKeyPrefix: secretKey?.substring(0, 10) + '...',
+      hasPriceId: !!process.env.STRIPE_PREMIUM_PRICE_ID,
+      priceIdPrefix: process.env.STRIPE_PREMIUM_PRICE_ID?.substring(0, 10) + '...'
+    })
+    
     if (!secretKey) {
       throw new Error('STRIPE_SECRET_KEY is not configured')
     }
