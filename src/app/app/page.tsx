@@ -36,12 +36,19 @@ interface Conversation {
   timestamp: string
 }
 
+interface Project {
+  id: string
+  name: string
+  lastUpdated: string
+  conversationCount: number
+}
+
 export default function AppPage() {
   const { status } = useSession()
   const [activeProject, setActiveProjectState] = useState<string | null>(null)
   const [conversations, setConversationsState] = useState<Conversation[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
-  const [projects, setProjects] = useState<any[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [showMobileProjectSelector, setShowMobileProjectSelector] = useState(false)
 
   // localStorageから会話データを読み込み
