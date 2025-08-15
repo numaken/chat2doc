@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'invoice.payment_succeeded': {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = event.data.object as any
         
         if (invoice.subscription && invoice.billing_reason === 'subscription_cycle') {
@@ -78,6 +79,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'invoice.payment_failed': {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = event.data.object as any
         
         console.log('❌ 決済失敗:', {
