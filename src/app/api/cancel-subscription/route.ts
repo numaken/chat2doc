@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       const body = await request.json()
       reason = body.reason || reason
       cancelationType = body.cancelationType || cancelationType
-    } catch (parseError) {
+    } catch {
       console.log('ℹ️ リクエストボディが空、デフォルト値を使用')
     }
     
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
     
     // Stripeエラーの詳細処理
     if (error && typeof error === 'object' && 'type' in error) {
-      const stripeError = error as any
+      const stripeError = error as { type: string; message: string }
       if (stripeError.type === 'StripeInvalidRequestError') {
         return NextResponse.json(
           {
@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
 }
 
 // サブスクリプション再開API
-export async function PATCH(request: NextRequest) {
+export async function PATCH(_request: NextRequest) {
   console.log('🔄 サブスクリプション再開リクエスト開始')
   
   try {

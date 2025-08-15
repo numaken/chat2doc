@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     try {
       const body = await request.json()
       priceId = body.priceId || STRIPE_CONFIG.premium.priceId
-    } catch (parseError) {
+    } catch {
       console.log('ℹ️ リクエストボディが空、デフォルトpriceIdを使用')
     }
     console.log('💰 使用価格ID:', priceId)
