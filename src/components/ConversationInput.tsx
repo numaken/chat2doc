@@ -131,7 +131,8 @@ export default function ConversationInput({
 
 ChatGPT: Twitter API v2を使用した自動投稿機能の実装について説明します...
 "
-            className="w-full h-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-full p-4 text-base border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            style={{ minHeight: '200px' }}
             disabled={isProcessing}
           />
         </div>
@@ -145,7 +146,7 @@ ChatGPT: Twitter API v2を使用した自動投稿機能の実装について説
         )}
 
         {/* アクションボタン */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <FileText className="w-4 h-4" />
             <span>{inputText.length} 文字</span>
@@ -154,7 +155,7 @@ ChatGPT: Twitter API v2を使用した自動投稿機能の実装について説
           <button
             onClick={processConversation}
             disabled={!inputText.trim() || isProcessing}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium text-base sm:text-sm"
           >
             {isProcessing ? (
               <>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession, signIn } from 'next-auth/react'
-import { FileText, MessageSquare, Users, Bot, Shield } from 'lucide-react'
+import { FileText, MessageSquare, Users, Bot, Shield, ChevronDown, Folder } from 'lucide-react'
 import Header from '@/components/Header'
 import ProjectSidebar from '@/components/ProjectSidebar'
 import ConversationInput from '@/components/ConversationInput'
@@ -41,11 +41,14 @@ export default function AppPage() {
   const [activeProject, setActiveProjectState] = useState<string | null>(null)
   const [conversations, setConversationsState] = useState<Conversation[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const [projects, setProjects] = useState<any[]>([])
+  const [showMobileProjectSelector, setShowMobileProjectSelector] = useState(false)
 
   // localStorageから会話データを読み込み
   useEffect(() => {
     const savedConversations = localStorage.getItem('chat2doc_conversations')
     const savedActiveProject = localStorage.getItem('chat2doc_activeProject')
+    const savedProjects = localStorage.getItem('chat2doc_projects')
     
     if (savedConversations) {
       try {
@@ -57,6 +60,23 @@ export default function AppPage() {
     
     if (savedActiveProject) {
       setActiveProjectState(savedActiveProject)
+    }
+
+    if (savedProjects) {
+      try {
+        setProjects(JSON.parse(savedProjects))
+      } catch (e) {
+        console.error('Failed to load projects:', e)
+        setProjects([
+          { id: '1', name: 'PostPilot Pro開発', lastUpdated: '2024-08-14', conversationCount: 5 },
+          { id: '2', name: 'WordPressプラグイン', lastUpdated: '2024-08-12', conversationCount: 5 }
+        ])
+      }
+    } else {
+      setProjects([
+        { id: '1', name: 'PostPilot Pro開発', lastUpdated: '2024-08-14', conversationCount: 5 },
+        { id: '2', name: 'WordPressプラグイン', lastUpdated: '2024-08-12', conversationCount: 5 }
+      ])
     }
     
     setIsLoaded(true)
@@ -124,8 +144,57 @@ export default function AppPage() {
       <Header />
       
       <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)]">
-        {/* 左サイドバー: プロジェクト管理 */}
-        <div className="lg:w-80 border-b lg:border-b-0 lg:border-r border-gray-200">
+        {/* モバイル用プロジェクト選択バー */}
+        <div className="lg:hidden bg-white border-b border-gray-200 p-3">
+          <button
+            onClick={() => setShowMobileProjectSelector(!showMobileProjectSelector)}
+            className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-lg border hover:bg-gray-100 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Folder className="w-5 h-5 text-blue-600" />
+              <span className="font-medium text-gray-900">
+                {activeProject ? 
+                  projects.find(p => p.id === activeProject)?.name || 'プロジェクト未選択' : 
+                  'プロジェクトを選択'
+                }
+              </span>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${showMobileProjectSelector ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {/* モバイル用プロジェクトドロップダウン */}
+          {showMobileProjectSelector && (
+            <div className="absolute left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-lg">
+              <div className="max-h-64 overflow-y-auto">
+                {projects.map((project) => (
+                  <button
+                    key={project.id}
+                    onClick={() => {
+                      setActiveProject(project.id)
+                      setShowMobileProjectSelector(false)
+                    }}
+                    className={`w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                      activeProject === project.id ? 'bg-blue-50' : ''
+                    }`}
+                  >
+                    <Folder className={`w-5 h-5 ${activeProject === project.id ? 'text-blue-600' : 'text-gray-400'}`} />
+                    <div className="flex-1 text-left">
+                      <div className={`font-medium ${activeProject === project.id ? 'text-blue-900' : 'text-gray-900'}`}>
+                        {project.name}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {project.lastUpdated} • {project.conversationCount}件の会話
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 左サイドバー: プロジェクト管理（デスクトップのみ） */}
+        <div className="hidden lg:block lg:w-80 border-r border-gray-200">
           <ProjectSidebar 
             activeProject={activeProject}
             setActiveProject={setActiveProject}
