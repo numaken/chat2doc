@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ サブスクリプション取得:', { 
       subscriptionId: subscription.id,
       status: subscription.status,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       currentPeriodEnd: (subscription as any).current_period_end
     })
 
