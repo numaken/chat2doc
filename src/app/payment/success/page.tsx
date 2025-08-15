@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { CheckCircle, Crown, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-export default function PaymentSuccess() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [sessionId, setSessionId] = useState<string | null>(null)
@@ -82,5 +82,17 @@ export default function PaymentSuccess() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">読み込み中...</div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   )
 }
