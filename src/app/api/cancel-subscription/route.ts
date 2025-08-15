@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ サブスクリプション取得:', { 
       subscriptionId: subscription.id,
       status: subscription.status,
-      currentPeriodEnd: subscription.current_period_end
+      currentPeriodEnd: (subscription as any).current_period_end
     })
 
     let canceledSubscription
@@ -184,7 +184,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// サブスクリプション再開API
+// サブスクリプション再開API  
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function PATCH(_request: NextRequest) {
   console.log('🔄 サブスクリプション再開リクエスト開始')
   
