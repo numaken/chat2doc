@@ -1,9 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Check, MessageSquare, FileText, Bot, Target, Users, Code, Lightbulb, AlertCircle, Zap, Shield, Clock } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowRight, Check, MessageSquare, FileText, Bot, Target, Users, Code, Lightbulb, AlertCircle, Zap, Shield, Clock, X } from 'lucide-react'
 
 export default function LandingPage() {
+  const [showUsageModal, setShowUsageModal] = useState(false)
+  const [showDemoInterface, setShowDemoInterface] = useState(false)
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
@@ -55,17 +58,24 @@ export default function LandingPage() {
               ログインして始める
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
-            <button className="border border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
+            <button 
+              onClick={() => setShowUsageModal(true)}
+              className="border border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+            >
               使用例を見る
             </button>
           </div>
           
           {/* デモ画像エリア */}
-          <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-4xl mx-auto mx-4">
-            <div className="bg-gray-100 rounded-lg h-48 sm:h-64 flex items-center justify-center">
+          <div 
+            className="bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-4xl mx-auto mx-4 cursor-pointer hover:shadow-2xl transition-shadow"
+            onClick={() => setShowDemoInterface(true)}
+          >
+            <div className="bg-gray-100 rounded-lg h-48 sm:h-64 flex items-center justify-center hover:bg-gray-200 transition-colors">
               <div className="text-center">
                 <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
                 <p className="text-gray-500 text-sm sm:text-base">Chat2Doc インターフェース デモ</p>
+                <p className="text-gray-400 text-xs mt-2">クリックして詳細を表示</p>
               </div>
             </div>
           </div>
@@ -315,17 +325,17 @@ export default function LandingPage() {
               <h4 className="font-semibold text-white mb-4">サービス</h4>
               <ul className="space-y-2">
                 <li><Link href="/app" className="hover:text-white transition-colors">アプリを開く</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">使い方ガイド</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API仕様</a></li>
+                <li><button onClick={() => setShowUsageModal(true)} className="hover:text-white transition-colors">使い方ガイド</button></li>
+                <li><Link href="/dashboard" className="hover:text-white transition-colors">ダッシュボード</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-semibold text-white mb-4">サポート</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition-colors">お問い合わせ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">プライバシーポリシー</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">利用規約</a></li>
+                <li><a href="mailto:support@chat2doc.example.com" className="hover:text-white transition-colors">お問い合わせ</a></li>
+                <li><button onClick={() => alert('プライバシーポリシーページを準備中です')} className="hover:text-white transition-colors">プライバシーポリシー</button></li>
+                <li><button onClick={() => alert('利用規約ページを準備中です')} className="hover:text-white transition-colors">利用規約</button></li>
               </ul>
             </div>
           </div>
@@ -335,6 +345,143 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* 使用例モーダル */}
+      {showUsageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Chat2Doc 使用例</h2>
+                <button 
+                  onClick={() => setShowUsageModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">1. 入力例（AI会話ログ）</h3>
+                  <div className="bg-gray-100 p-4 rounded-lg text-sm">
+                    <p className="text-gray-700 mb-2"><strong>ユーザー:</strong> Next.jsでユーザー認証を実装したいのですが、どの方法がおすすめですか？</p>
+                    <p className="text-gray-700 mb-2"><strong>AI:</strong> Next.jsでの認証実装には主に3つの選択肢があります...</p>
+                    <p className="text-gray-500 text-xs">（会話が続く...）</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">2. 構造化結果</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-blue-900 mb-2">🎯 目的</h4>
+                      <p className="text-blue-800 text-sm">Next.jsアプリケーションにユーザー認証機能を実装</p>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-green-900 mb-2">✅ 対応履歴</h4>
+                      <p className="text-green-800 text-sm">• 認証ライブラリの比較検討<br/>• NextAuth.js選定</p>
+                    </div>
+                    <div className="bg-amber-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-amber-900 mb-2">⚠️ 課題</h4>
+                      <p className="text-amber-800 text-sm">• セッション管理の複雑さ<br/>• OAuth設定の理解</p>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-purple-900 mb-2">🔄 次のアクション</h4>
+                      <p className="text-purple-800 text-sm">• NextAuth.jsの設定<br/>• Google OAuth設定</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">3. Markdown出力</h3>
+                  <div className="bg-gray-900 text-gray-100 p-4 rounded-lg text-sm font-mono">
+                    <div className="text-green-400"># Next.js認証実装プロジェクト</div>
+                    <div className="mt-2 text-yellow-400">## 目的</div>
+                    <div className="text-gray-300">Next.jsアプリケーションにユーザー認証機能を実装</div>
+                    <div className="mt-2 text-yellow-400">## 対応履歴</div>
+                    <div className="text-gray-300">- 認証ライブラリの比較検討<br/>- NextAuth.js選定</div>
+                    <div className="text-gray-500">...</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-8 text-center">
+                <Link 
+                  href="/auth/signin"
+                  onClick={() => setShowUsageModal(false)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
+                >
+                  今すぐ試してみる
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* デモインターフェースモーダル */}
+      {showDemoInterface && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Chat2Doc インターフェース</h2>
+                <button 
+                  onClick={() => setShowDemoInterface(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="bg-gray-100 rounded-lg p-6">
+                <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">💬 会話ログ入力エリア</h3>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500">ChatGPT、Claude、Geminiなどの会話ログをここに貼り付け</p>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-lg shadow-sm p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">📊 構造化プレビュー</h3>
+                    <div className="space-y-2">
+                      <div className="bg-blue-100 p-2 rounded text-sm">🎯 目的</div>
+                      <div className="bg-green-100 p-2 rounded text-sm">✅ 対応履歴</div>
+                      <div className="bg-amber-100 p-2 rounded text-sm">⚠️ 課題</div>
+                      <div className="bg-purple-100 p-2 rounded text-sm">🔄 次のアクション</div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg shadow-sm p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">📄 Markdown出力</h3>
+                    <div className="bg-gray-900 text-green-400 p-3 rounded text-xs font-mono">
+                      <div># プロジェクト名</div>
+                      <div>## 目的</div>
+                      <div>## 対応履歴</div>
+                      <div>...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 text-center">
+                <Link 
+                  href="/auth/signin"
+                  onClick={() => setShowDemoInterface(false)}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
+                >
+                  実際に使ってみる
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
