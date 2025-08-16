@@ -164,15 +164,27 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: "system",
-              content: systemPrompt + `\n\n注意: これは${chunks.length}個のチャンクの${i + 1}番目です。必ず有効なJSONのみで応答してください。`
+              content: `あなたは会話ログ分析AIです。以下のJSONフォーマットでのみ応答してください。他のテキストは一切含めないでください。
+
+{
+  "purpose": "1文での目的",
+  "progress": ["完了事項1", "完了事項2"],
+  "challenges": ["課題1", "課題2"],
+  "nextActions": ["次のアクション1", "次のアクション2"],
+  "code": [],
+  "intentions": ["意図1", "意図2"],
+  "concerns": ["懸念1", "懸念2"]
+}
+
+重要: 必ず有効なJSONのみで応答し、説明文や前置きは一切含めないでください。`
             },
             {
               role: "user", 
-              content: `以下の会話ログの一部を構造化してください：\n\n${chunks[i]}`
+              content: `会話ログ（${chunks.length}個中${i + 1}番目）:\n\n${chunks[i]}`
             }
           ],
-          max_tokens: 500,
-          temperature: 0.3,
+          max_tokens: 400,
+          temperature: 0.1,
         })
         
         const chunkContent = chunkCompletion.choices[0]?.message?.content
@@ -326,15 +338,27 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: systemPrompt
+          content: `あなたは会話ログ分析AIです。以下のJSONフォーマットでのみ応答してください。
+
+{
+  "purpose": "プロジェクトの目的を1文で",
+  "progress": ["完了したタスク1", "完了したタスク2"],
+  "challenges": ["課題1", "課題2"],
+  "nextActions": ["次のアクション1", "次のアクション2"],
+  "code": [{"fileName": "ファイル名", "description": "説明", "snippet": "コード"}],
+  "intentions": ["設計意図1", "設計意図2"],
+  "concerns": ["技術的懸念1", "技術的懸念2"]
+}
+
+重要: 必ず有効なJSONのみで応答し、他のテキストは一切含めないでください。`
         },
         {
           role: "user", 
-          content: `以下の会話ログを構造化してください：\n\n${fullText}`
+          content: `会話ログを分析してプロジェクト情報を抽出してください：\n\n${fullText}`
         }
       ],
       max_tokens: 500,
-      temperature: 0.3, // より一貫性のある出力のため低めに設定
+      temperature: 0.1, // より一貫性のあるJSON出力のため低めに設定
     })
 
     const responseContent = completion.choices[0]?.message?.content
