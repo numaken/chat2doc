@@ -242,6 +242,13 @@ export default function Dashboard() {
                         <AlertTriangle className="w-4 h-4" />
                         サブスクリプションを解約
                       </Link>
+                      <Link
+                        href="/settings/delete-account"
+                        className="w-full flex items-center justify-center gap-2 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-900 transition-colors text-sm"
+                      >
+                        <AlertTriangle className="w-4 h-4" />
+                        アカウントを完全削除
+                      </Link>
                     </div>
                   </>
                 ) : (
@@ -255,21 +262,30 @@ export default function Dashboard() {
                         月5回まで利用可能です
                       </p>
                     </div>
-                    <button
-                      onClick={() => {
-                        // アップグレードボタンの処理
-                        const upgradeButton = document.querySelector('.upgrade-button') as HTMLButtonElement
-                        if (upgradeButton) {
-                          upgradeButton.click()
-                        } else {
-                          window.location.href = '/app'
-                        }
-                      }}
-                      className="w-full flex items-center justify-center gap-2 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
-                    >
-                      <Crown className="w-4 h-4" />
-                      プレミアムにアップグレード
-                    </button>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => {
+                          // アップグレードボタンの処理
+                          const upgradeButton = document.querySelector('.upgrade-button') as HTMLButtonElement
+                          if (upgradeButton) {
+                            upgradeButton.click()
+                          } else {
+                            window.location.href = '/app'
+                          }
+                        }}
+                        className="w-full flex items-center justify-center gap-2 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
+                      >
+                        <Crown className="w-4 h-4" />
+                        プレミアムにアップグレード
+                      </button>
+                      <Link
+                        href="/settings/delete-account"
+                        className="w-full flex items-center justify-center gap-2 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-900 transition-colors text-sm"
+                      >
+                        <AlertTriangle className="w-4 h-4" />
+                        アカウントを完全削除
+                      </Link>
+                    </div>
                   </>
                 )}
               </div>
