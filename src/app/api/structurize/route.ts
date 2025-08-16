@@ -24,6 +24,12 @@ if (!apiKey || apiKey === 'disabled_for_security_reasons') {
   console.warn('🛡️ OpenAI API無効化 - セキュリティ保護中')
 }
 
+console.log('🔧 API初期化時の確認:', { 
+  hasApiKey: !!apiKey, 
+  keyLength: apiKey?.length,
+  keyPrefix: apiKey?.substring(0, 15) + '...'
+})
+
 const openai = new OpenAI({
   apiKey: apiKey || 'disabled',
 })
