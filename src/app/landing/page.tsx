@@ -333,15 +333,16 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold text-white mb-4">サポート</h4>
               <ul className="space-y-2">
-                <li><a href="mailto:support@chat2doc.example.com" className="hover:text-white transition-colors">お問い合わせ</a></li>
-                <li><button onClick={() => alert('プライバシーポリシーページを準備中です')} className="hover:text-white transition-colors">プライバシーポリシー</button></li>
-                <li><button onClick={() => alert('利用規約ページを準備中です')} className="hover:text-white transition-colors">利用規約</button></li>
+                <li><a href="https://www.panolabollc.com/contact/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">お問い合わせ</a></li>
+                <li><a href="https://www.panolabollc.com/privacy/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">プライバシーポリシー</a></li>
+                <li><a href="https://www.panolabollc.com/term/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">利用規約</a></li>
+                <li><a href="https://www.panolabollc.com/legal-notice/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">特定商取引法に基づく表記</a></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-12 pt-8 text-center">
-            <p>&copy; 2024 Chat2Doc. All rights reserved.</p>
+            <p>&copy; 2024 Chat2Doc. All rights reserved. | Powered by <a href="https://www.panolabollc.com/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">Panolab LLC</a></p>
           </div>
         </div>
       </footer>
