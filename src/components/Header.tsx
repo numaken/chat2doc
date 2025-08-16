@@ -7,25 +7,30 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 
 export default function Header() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [isPremium, setIsPremium] = useState(false)
 
-  // プレミアムプランの確認
+  // プレミアムプランの確認 - ログインユーザーのみ
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (session?.user?.id && typeof window !== 'undefined') {
       try {
         const currentMonth = new Date().toISOString().substring(0, 7)
         const usageData = JSON.parse(localStorage.getItem('chat2doc_usage') || '{}')
-        const userKey = Object.keys(usageData).find(key => key.endsWith(`-${currentMonth}`))
-        if (userKey && usageData[userKey]?.plan === 'premium') {
+        const userKey = `${session.user.id}-${currentMonth}`
+        if (usageData[userKey]?.plan === 'premium') {
           setIsPremium(true)
+        } else {
+          setIsPremium(false)
         }
       } catch (error) {
         console.error('プレミアム状態確認エラー:', error)
+        setIsPremium(false)
       }
+    } else {
+      setIsPremium(false)
     }
-  }, [])
+  }, [session])
 
   return (
     <header className="h-16 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 shadow-lg border-b border-blue-800/50 flex items-center justify-between px-4 sm:px-6 relative overflow-hidden">
@@ -58,7 +63,7 @@ export default function Header() {
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4 relative z-10">
-        {session ? (
+        {status === 'authenticated' && session ? (
           <>
             <Link 
               href="/dashboard" 
@@ -138,6 +143,11 @@ export default function Header() {
               )}
             </div>
           </>
+        ) : status === 'loading' ? (
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 border-2 border-blue-300 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm text-blue-100 font-medium">読み込み中...</span>
+          </div>
         ) : (
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-blue-300 animate-pulse" />

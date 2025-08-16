@@ -29,10 +29,20 @@ const openai = new OpenAI({
 })
 
 export async function POST(request: NextRequest) {
+  console.log('🚀 /api/structurize リクエスト開始')
+  
   try {
     // 認証チェック: ログインユーザーのみAPIアクセス可能
+    console.log('🔍 認証チェック中...')
     const session = await getServerSession()
+    console.log('👤 セッション情報:', { 
+      hasSession: !!session, 
+      userId: session?.user?.id,
+      userEmail: session?.user?.email 
+    })
+    
     if (!session || !session.user || !session.user.email) {
+      console.log('❌ 認証エラー: セッションまたはユーザー情報が不足')
       return NextResponse.json(
         { 
           error: 'ログインが必要です。認証後に再度お試しください。',
@@ -57,7 +67,14 @@ export async function POST(request: NextRequest) {
     }
 
     // セキュリティチェック: APIキーが無効な場合はサービス停止
+    console.log('🔑 APIキー確認:', { 
+      hasApiKey: !!apiKey, 
+      keyPrefix: apiKey?.substring(0, 10) + '...',
+      keySource: process.env.OPENAI_API_KEY ? 'OPENAI_API_KEY' : 'OPENAI_API_KEY_SHARED'
+    })
+    
     if (!apiKey || apiKey === 'disabled_for_security_reasons' || apiKey === 'disabled') {
+      console.log('❌ APIキーエラー: サービス停止中')
       return NextResponse.json(
         { 
           error: 'サービス一時停止中です。認証システム実装後に再開予定です。',
@@ -67,9 +84,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { conversationText } = await request.json()
+    console.log('📄 リクエストボディ解析中...')
+    const body = await request.json()
+    const { conversationText } = body
+    console.log('📝 会話テキスト長:', conversationText?.length || 0)
 
     if (!conversationText || !conversationText.trim()) {
+      console.log('❌ 会話テキストエラー: 空またはundefined')
       return NextResponse.json(
         { error: '会話テキストが必要です' },
         { status: 400 }
@@ -348,16 +369,32 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ API Error:', error)
+    console.error('Error details:', {
+      name: (error as Error)?.name,
+      message: (error as Error)?.message,
+      stack: (error as Error)?.stack
+    })
     
     if (error instanceof Error && error.message.includes('API key')) {
+      console.log('❌ OpenAI APIキーエラー')
       return NextResponse.json(
-        { error: 'OpenAI APIキーが設定されていません' },
+        { 
+          error: 'OpenAI APIキーが設定されていません',
+          details: error.message,
+          code: 'OPENAI_API_KEY_ERROR'
+        },
         { status: 500 }
       )
     }
 
+    // より詳細なエラー情報を返す
+    const errorMessage = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: '会話の構造化中にエラーが発生しました' },
+      { 
+        error: '会話の構造化中にエラーが発生しました',
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     )
   }
