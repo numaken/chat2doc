@@ -203,16 +203,44 @@ export async function POST(request: NextRequest) {
             if (chunkData.purpose && Array.isArray(chunkData.progress) && 
                 Array.isArray(chunkData.challenges) && Array.isArray(chunkData.nextActions)) {
               chunkResults.push(chunkData)
+              console.log(`✅ チャンク ${i + 1} 処理完了:`, {
+                purpose: chunkData.purpose?.substring(0, 50) + '...',
+                progressCount: chunkData.progress?.length || 0,
+                challengesCount: chunkData.challenges?.length || 0,
+                nextActionsCount: chunkData.nextActions?.length || 0
+              })
+            } else {
+              console.log(`⚠️ チャンク ${i + 1} のデータが不完全:`, {
+                hasPurpose: !!chunkData.purpose,
+                hasProgress: Array.isArray(chunkData.progress),
+                hasChallenges: Array.isArray(chunkData.challenges),
+                hasNextActions: Array.isArray(chunkData.nextActions),
+                rawData: chunkData
+              })
             }
-            console.log(`✅ チャンク ${i + 1} 処理完了`)
           } catch (parseError) {
             console.error(`❌ チャンク ${i + 1} の解析エラー:`, parseError)
+            console.error(`❌ 元のレスポンス:`, chunkContent)
           }
         }
       }
       
       // 結果をマージ
       console.log(`🔗 ${chunkResults.length} チャンクの結果をマージ中...`)
+      
+      if (chunkResults.length === 0) {
+        console.error('❌ チャンク処理結果が0件です。フォールバック処理を実行します。')
+        // チャンクが全て失敗した場合のフォールバック
+        return NextResponse.json(
+          { 
+            error: 'チャンク処理で有効な結果が得られませんでした',
+            details: 'すべてのチャンクでJSON解析または構造確認に失敗しました',
+            suggestion: '会話ログをより短く分割するか、内容を簡素化してください'
+          },
+          { status: 500 }
+        )
+      }
+      
       const mergedResult: StructuredData = {
         purpose: chunkResults[0]?.purpose || "複数の会話チャンクから抽出されたプロジェクト",
         progress: [],
@@ -250,6 +278,16 @@ export async function POST(request: NextRequest) {
         intentionsCount: mergedResult.intentions?.length || 0,
         concernsCount: mergedResult.concerns?.length || 0
       })
+      
+      // マージ結果の詳細ログ
+      if (mergedResult.progress.length === 0 && mergedResult.challenges.length === 0 && mergedResult.nextActions.length === 0) {
+        console.warn('⚠️ マージ結果が空です。元のチャンクデータを確認:', chunkResults.map(chunk => ({
+          purpose: chunk.purpose?.substring(0, 30),
+          progressLength: chunk.progress?.length,
+          challengesLength: chunk.challenges?.length,
+          nextActionsLength: chunk.nextActions?.length
+        })))
+      }
 
       // 使用量を記録（チャンク処理成功時のみ）
       const updatedUsage = UsageManager.recordUsage(session.user.id, session.user.email)
