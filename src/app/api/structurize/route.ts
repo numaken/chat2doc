@@ -319,15 +319,16 @@ export async function POST(request: NextRequest) {
       console.error('❌ JSON解析エラー:', parseError)
       console.log('📄 元の応答:', responseContent)
       
-      // フォールバック: 簡単な構造化データを返す
+      // フォールバック: OpenAI APIレスポンスが不正な形式の場合
+      console.log('⚠️ フォールバック処理: 手動での結果確認が必要')
       structuredData = {
-        purpose: "会話ログの構造化が部分的に完了しました",
-        progress: ["AIによる会話分析を実行"],
-        challenges: ["JSON形式での完全な構造化に課題が発生"],
-        nextActions: ["手動での構造化結果の確認と調整が必要"],
+        purpose: "会話内容の分析を実行しましたが、結果の構造化で問題が発生しました",
+        progress: ["AIによる会話ログの解析は完了"],
+        challenges: ["構造化結果の自動生成でエラーが発生", "手動での内容確認が必要"],
+        nextActions: ["会話内容を再度確認してください", "必要に応じて会話ログを分割してから再実行"],
         code: [],
-        intentions: [],
-        concerns: []
+        intentions: ["より適切な構造化のため、会話内容の明確化が重要"],
+        concerns: ["一時的な技術的問題の可能性", "会話内容が複雑すぎる可能性"]
       }
     }
 
