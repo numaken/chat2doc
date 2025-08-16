@@ -103,6 +103,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 文字数による事前チェック（概算でトークン数を推定）
+    const estimatedTokens = Math.ceil(conversationText.length / 3) // 1文字≈0.33トークンで概算
+    const maxTokens = 15000 // max_tokensも考慮した安全な制限
+    
+    if (estimatedTokens > maxTokens && conversationText.length <= 15000) {
+      console.log(`⚠️ 長いテキスト警告: ${conversationText.length}文字 (推定${estimatedTokens}トークン)`)
+      console.log('🔄 自動的にチャンク処理を実行します')
+    }
+
     // システムプロンプトを定義
     const systemPrompt = `あなたは開発者向けの会話ログ分析AIアシスタントです。
 
@@ -132,7 +141,7 @@ export async function POST(request: NextRequest) {
 
     // 長いテキストをチャンクに分割して処理
     const fullText = conversationText.trim()
-    const maxCharsPerChunk = 25000 // チャンクあたり約10000トークン相当
+    const maxCharsPerChunk = 15000 // チャンクあたり約6000トークン相当（安全マージン込み）
     
     if (fullText.length > maxCharsPerChunk) {
       console.log(`📝 長いテキストを検出 (${fullText.length} 文字). チャンク分割処理を実行します`)
@@ -162,7 +171,7 @@ export async function POST(request: NextRequest) {
               content: `以下の会話ログの一部を構造化してください：\n\n${chunks[i]}`
             }
           ],
-          max_tokens: 1000,
+          max_tokens: 500,
           temperature: 0.3,
         })
         
@@ -286,7 +295,7 @@ export async function POST(request: NextRequest) {
           content: `以下の会話ログを構造化してください：\n\n${fullText}`
         }
       ],
-      max_tokens: 1000,
+      max_tokens: 500,
       temperature: 0.3, // より一貫性のある出力のため低めに設定
     })
 
