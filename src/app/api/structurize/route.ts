@@ -106,6 +106,8 @@ export async function POST(request: NextRequest) {
     // システムプロンプトを定義
     const systemPrompt = `あなたは開発者向けの会話ログ分析AIアシスタントです。
 
+重要: 必ず有効なJSON形式でのみ応答してください。他のテキストは一切含めないでください。
+
 以下の会話ログを分析し、プロジェクトの状況を以下の7つのカテゴリに構造化してください：
 
 1. 目的（purpose）: プロジェクトの目的や目標を1文で簡潔に
@@ -116,39 +118,17 @@ export async function POST(request: NextRequest) {
 6. 意図（intentions）: なぜその実装・設計を選んだのかの理由や背景
 7. 懸念点（concerns）: セキュリティ、パフォーマンス、保守性などの技術的な懸念事項
 
-必ず以下のJSON形式で出力してください：
+応答は必ず以下の形式の有効なJSONでなければなりません。他のテキストや説明は含めないでください：
+
 {
   "purpose": "プロジェクトの目的を1文で",
-  "progress": [
-    "完了したタスク1",
-    "完了したタスク2"
-  ],
-  "challenges": [
-    "課題1", 
-    "課題2"
-  ],
-  "nextActions": [
-    "次のアクション1",
-    "次のアクション2"
-  ],
-  "code": [
-    {
-      "fileName": "ファイル名",
-      "description": "コードの説明",
-      "snippet": "コードスニペット"
-    }
-  ],
-  "intentions": [
-    "設計意図1",
-    "設計意図2"
-  ],
-  "concerns": [
-    "技術的懸念点1",
-    "技術的懸念点2"
-  ]
-}
-
-会話の文脈から開発者にとって価値のある具体的な情報を抽出してください。`
+  "progress": ["完了したタスク1", "完了したタスク2"],
+  "challenges": ["課題1", "課題2"],
+  "nextActions": ["次のアクション1", "次のアクション2"],
+  "code": [{"fileName": "ファイル名", "description": "コードの説明", "snippet": "コードスニペット"}],
+  "intentions": ["設計意図1", "設計意図2"],
+  "concerns": ["技術的懸念点1", "技術的懸念点2"]
+}`
 
     // 長いテキストをチャンクに分割して処理
     const fullText = conversationText.trim()
@@ -175,7 +155,7 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: "system",
-              content: systemPrompt + `\n\n注意: これは${chunks.length}個のチャンクの${i + 1}番目です。`
+              content: systemPrompt + `\n\n注意: これは${chunks.length}個のチャンクの${i + 1}番目です。必ず有効なJSONのみで応答してください。`
             },
             {
               role: "user", 
@@ -189,9 +169,26 @@ export async function POST(request: NextRequest) {
         const chunkContent = chunkCompletion.choices[0]?.message?.content
         if (chunkContent) {
           try {
-            const jsonMatch = chunkContent.match(/```json\s*([\s\S]*?)\s*```/)
-            const jsonString = jsonMatch ? jsonMatch[1] : chunkContent
-            const chunkData = JSON.parse(jsonString.trim()) as StructuredData
+            let jsonString = chunkContent.trim()
+            
+            // JSONブロック抽出（同じロジックを使用）
+            const jsonMatch = jsonString.match(/```json\s*([\s\S]*?)\s*```/)
+            if (jsonMatch) {
+              jsonString = jsonMatch[1].trim()
+            } else {
+              const codeMatch = jsonString.match(/```\s*([\s\S]*?)\s*```/)
+              if (codeMatch) {
+                jsonString = codeMatch[1].trim()
+              } else {
+                const jsonStart = jsonString.indexOf('{')
+                const jsonEnd = jsonString.lastIndexOf('}') + 1
+                if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                  jsonString = jsonString.substring(jsonStart, jsonEnd)
+                }
+              }
+            }
+            
+            const chunkData = JSON.parse(jsonString) as StructuredData
             
             // 必要なプロパティが存在することを確認
             if (chunkData.purpose && Array.isArray(chunkData.progress) && 
@@ -300,14 +297,36 @@ export async function POST(request: NextRequest) {
       throw new Error('OpenAI APIからの応答が空です')
     }
 
-    // JSONの抽出を試みる（```json ``` で囲まれている場合に対応）
+    // JSONの抽出を試みる（複数パターンに対応）
     let structuredData: StructuredData
     try {
-      // JSONブロックを抽出
-      const jsonMatch = responseContent.match(/```json\s*([\s\S]*?)\s*```/)
-      const jsonString = jsonMatch ? jsonMatch[1] : responseContent
+      console.log('🔍 JSON解析開始')
+      let jsonString = responseContent.trim()
       
-      structuredData = JSON.parse(jsonString.trim()) as StructuredData
+      // パターン1: ```json ``` で囲まれている場合
+      const jsonMatch = jsonString.match(/```json\s*([\s\S]*?)\s*```/)
+      if (jsonMatch) {
+        jsonString = jsonMatch[1].trim()
+        console.log('📋 JSONブロックを検出')
+      }
+      // パターン2: ``` で囲まれている場合（json指定なし）
+      else {
+        const codeMatch = jsonString.match(/```\s*([\s\S]*?)\s*```/)
+        if (codeMatch) {
+          jsonString = codeMatch[1].trim()
+          console.log('📋 コードブロックを検出')
+        }
+      }
+      
+      // パターン3: { で始まる部分を抽出
+      const jsonStart = jsonString.indexOf('{')
+      const jsonEnd = jsonString.lastIndexOf('}') + 1
+      if (jsonStart !== -1 && jsonEnd > jsonStart) {
+        jsonString = jsonString.substring(jsonStart, jsonEnd)
+        console.log('📋 JSON部分を抽出:', jsonString.substring(0, 100) + '...')
+      }
+      
+      structuredData = JSON.parse(jsonString) as StructuredData
       
       // 必要なプロパティが存在することを確認
       if (!structuredData.purpose || !Array.isArray(structuredData.progress) || 
