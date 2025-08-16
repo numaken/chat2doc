@@ -326,7 +326,7 @@ export default function LandingPage() {
               <ul className="space-y-2">
                 <li><Link href="/app" className="hover:text-white transition-colors">アプリを開く</Link></li>
                 <li><button onClick={() => setShowUsageModal(true)} className="hover:text-white transition-colors">使い方ガイド</button></li>
-                <li><Link href="/dashboard" className="hover:text-white transition-colors">ダッシュボード</Link></li>
+                <li><Link href="/auth/signin" className="hover:text-white transition-colors">ログイン</Link></li>
               </ul>
             </div>
             
