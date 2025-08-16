@@ -71,7 +71,16 @@ export default function ConversationInput({
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
+        console.error('❌ APIレスポンスエラー:', response.status, response.statusText)
+        
+        let errorData
+        try {
+          errorData = await response.json()
+          console.error('❌ エラー詳細:', errorData)
+        } catch (parseError) {
+          console.error('❌ JSONパースエラー:', parseError)
+          throw new Error(`APIエラー (${response.status}): ${response.statusText}`)
+        }
         
         // 使用量制限の場合はアップグレードモーダル表示
         if (response.status === 429 && errorData.code === 'USAGE_LIMIT_EXCEEDED') {
@@ -80,11 +89,22 @@ export default function ConversationInput({
           return
         }
         
-        throw new Error(errorData.error || 'API呼び出しに失敗しました')
+        // より詳細なエラーメッセージ
+        const errorMessage = errorData.details 
+          ? `${errorData.error}: ${errorData.details}`
+          : errorData.error || `APIエラー (${response.status})`
+        
+        throw new Error(errorMessage)
       }
 
       const result = await response.json()
       console.log('✅ 構造化完了:', result)
+
+      // 使用量情報を更新
+      if (result.usage) {
+        setUsageInfo(result.usage)
+        console.log('📊 使用量情報:', result.usage)
+      }
 
       const newConversation = {
         id: `conv-${Math.random().toString(36).substr(2, 9)}`,
@@ -100,6 +120,7 @@ export default function ConversationInput({
       
       // 成功メッセージを表示（オプション）
       console.log('📊 トークン使用量:', result.metadata?.tokens)
+      console.log('📊 残り使用可能回数:', result.usage?.remainingCount)
       
     } catch (err) {
       console.error('❌ エラー:', err)
