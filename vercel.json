@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "chat2doc-beryl.vercel.app"
+        }
+      ],
+      "destination": "https://chat2doc.panolabollc.com/$1",
+      "permanent": false
+    }
+  ]
+}
