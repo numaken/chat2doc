@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chat2Doc
+
+AI会話を構造化されたドキュメントに変換し、プロジェクトの知識資産として活用するサービス
+
+## 機能概要
+
+- **AI会話ログの構造化**: ChatGPT・Claude・Gemini等との会話を7つのカテゴリに自動分類
+- **モバイル対応ペースト機能**: `/import`ページで全文ペーストから本文・コード自動分離
+- **Markdown出力**: 構造化結果をドキュメントとして即座にエクスポート
+- **認証システム**: 未ログイン（ローカル保存）／ログイン（クラウド同期・共有）の選択可能
 
 ## Getting Started
 
-First, run the development server:
+### 開発環境のセットアップ
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 環境変数の設定
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`.env.local` ファイルを作成し、以下を設定：
 
-## Learn More
+```bash
+# OpenAI API設定
+OPENAI_API_KEY=your_openai_api_key_here
 
-To learn more about Next.js, take a look at the following resources:
+# NextAuth設定（認証機能用）
+NEXTAUTH_SECRET=your_nextauth_secret_here
+NEXTAUTH_URL=http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Google OAuth設定
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## モデル切替の仕組み
 
-## Deploy on Vercel
+Chat2Docでは、処理速度と精度のバランスに応じてAIモデルを選択できる設計になっています。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 現在の設定
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **高速（軽量）モデル**: `gpt-3.5-turbo` - コスト効率重視、基本的な構造化に最適
+- **高精度（リッチ）モデル**: `gpt-4` - より詳細な分析が必要な場合（未実装）
+
+### 設定箇所
+
+モデルの切替は以下のファイルで管理されています：
+
+1. **APIルート**: `src/app/api/structurize/route.ts` (187行目、371行目)
+2. **テスト用API**: `src/app/api/debug-*` ファイル群
+3. **環境変数**: `.env.local` で `OPENAI_MODEL` 変数による切替（将来実装予定）
+
+### 設定例（将来対応）
+
+```bash
+# .env.local
+OPENAI_MODEL=gpt-3.5-turbo  # 高速モード
+# OPENAI_MODEL=gpt-4        # 高精度モード
+```
+
+## 主要ページ
+
+- `/` - ランディングページ
+- `/app` - メインアプリケーション（要認証）
+- `/import` - ペースト・整形機能（未認証でも利用可能）
+- `/auth/signin` - Google OAuth認証
+
+## テスト
+
+```bash
+# ユニットテスト実行
+npm run test
+
+# 監視モードでテスト実行
+npm run test:watch
+```
+
+テストファイル：
+- `src/utils/ingest.test.ts` - ペースト機能のコア処理テスト
+
+## アーキテクチャ
+
+- **フレームワーク**: Next.js 15 (App Router)
+- **認証**: NextAuth.js (Google OAuth)
+- **AI API**: OpenAI (GPT-3.5-turbo)
+- **スタイリング**: Tailwind CSS
+- **テスト**: Vitest
+
+## デプロイ
+
+本プロジェクトはVercelでホストされています。
+
+```bash
+# 本番ビルド確認
+npm run build
+npm run start
+```
+
+環境変数は本番環境でも同様に設定してください。

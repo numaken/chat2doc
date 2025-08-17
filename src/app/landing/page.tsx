@@ -18,12 +18,20 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-gray-900">Chat2Doc</span>
               <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">β版</span>
             </div>
-            <Link 
-              href="/app" 
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              アプリを開く
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link 
+                href="/import" 
+                className="text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
+              >
+                整形機能
+              </Link>
+              <Link 
+                href="/app" 
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                アプリを開く
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -39,14 +47,15 @@ export default function LandingPage() {
             ChatGPT・Claude・Gemini等との会話ログを構造化されたドキュメントに自動変換。<br className="hidden md:block" />
             開発プロジェクトの引き継ぎ書・仕様書・議事録として活用できます。
           </p>
-          {/* 認証導入の案内 */}
+          {/* 利用方法の案内 */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-6 sm:mb-8 max-w-2xl mx-auto mx-4">
             <div className="flex items-center gap-2 mb-2">
               <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
-              <span className="font-semibold text-blue-800 text-sm sm:text-base">安全な認証システム導入</span>
+              <span className="font-semibold text-blue-800 text-sm sm:text-base">利用方法について</span>
             </div>
             <p className="text-blue-700 text-xs sm:text-sm">
-              セキュリティ強化により、Googleアカウントでのログインが必要になりました。無料でご利用いただけます。
+              <strong>ログイン：</strong>クラウド同期・共有機能が利用可能（β版）<br/>
+              <strong>未ログイン：</strong>ローカル保存のみでお試し利用
             </p>
           </div>
 
@@ -57,6 +66,13 @@ export default function LandingPage() {
             >
               ログインして始める
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Link>
+            <Link 
+              href="/import" 
+              className="bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            >
+              お試し利用（整形機能）
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
             <button 
               onClick={() => setShowUsageModal(true)}
@@ -265,7 +281,7 @@ export default function LandingPage() {
               <Zap className="w-12 h-12 text-yellow-500 mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-3">高速処理</h3>
               <p className="text-gray-600">
-                GPT-3.5-turboによるコスト効率的な処理。90,000文字超の長い会話も自動分割して数秒で構造化
+                高速（軽量）／高精度（リッチ）モデルを選択可能。90,000文字超の長い会話も自動分割して数秒で構造化
               </p>
             </div>
             
@@ -279,9 +295,9 @@ export default function LandingPage() {
             
             <div className="bg-white p-8 rounded-lg shadow-sm">
               <Clock className="w-12 h-12 text-blue-500 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">即座に利用可能</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">柔軟な利用形態</h3>
               <p className="text-gray-600">
-                アカウント登録不要、すぐに使い始められます。Markdownエクスポートで他ツールとの連携も簡単
+                未ログインでお試し利用、ログインで本格活用。Markdownエクスポートで他ツールとの連携も簡単
               </p>
             </div>
           </div>
@@ -295,7 +311,7 @@ export default function LandingPage() {
             今すぐAI会話を知識資産に変換しましょう
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            無料で始められます。登録不要、すぐにお使いいただけます。
+            無料で始められます。お試し利用から本格活用まで対応。
           </p>
           <Link 
             href="/app" 
@@ -325,6 +341,7 @@ export default function LandingPage() {
               <h4 className="font-semibold text-white mb-4">サービス</h4>
               <ul className="space-y-2">
                 <li><Link href="/app" className="hover:text-white transition-colors">アプリを開く</Link></li>
+                <li><Link href="/import" className="hover:text-white transition-colors">整形機能を試す</Link></li>
                 <li><button onClick={() => setShowUsageModal(true)} className="hover:text-white transition-colors">使い方ガイド</button></li>
                 <li><Link href="/auth/signin" className="hover:text-white transition-colors">ログイン</Link></li>
               </ul>
