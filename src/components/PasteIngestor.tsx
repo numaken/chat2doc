@@ -7,11 +7,32 @@ export default function PasteIngestor() {
   const [extracted, setExtracted] = useState<{ body: string; codeBlocks: CodeBlock[] } | null>(null);
   const [tab, setTab] = useState<'preview'|'body'|'code'>('preview');
 
+  const decodeHtmlEntities = (text: string): string => {
+    return text
+      .replace(/&gt;/gi, '>')
+      .replace(/&lt;/gi, '<')
+      .replace(/&amp;/gi, '&')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#x27;/gi, "'")
+      .replace(/&#39;/gi, "'")
+      .replace(/&apos;/gi, "'")
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&([a-z]+);/gi, (match, entity) => {
+        const entities: Record<string, string> = {
+          'amp': '&', 'lt': '<', 'gt': '>', 'quot': '"', 'apos': "'", 'nbsp': ' '
+        };
+        return entities[entity.toLowerCase()] || match;
+      });
+  };
+
   const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const text = e.clipboardData.getData('text/plain');
+    let text = e.clipboardData.getData('text/plain');
+    text = decodeHtmlEntities(text);
+    
     requestAnimationFrame(() => {
-      setRaw((prev) => (prev ? prev + '\n' + text : text));
-      setExtracted(extractCodeAndBody(text));
+      const newValue = text;
+      setRaw(newValue);
+      setExtracted(extractCodeAndBody(newValue));
       setTab('preview');
     });
   };
@@ -31,7 +52,15 @@ export default function PasteIngestor() {
         placeholder="長押し → ペースト（スマホOK）"
         onPaste={onPaste}
         value={raw}
-        onChange={(e) => setRaw(e.target.value)}
+        onChange={(e) => {
+          let value = e.target.value;
+          // HTMLエンティティを即座にデコード
+          value = decodeHtmlEntities(value);
+          setRaw(value);
+          if (value.trim()) {
+            setExtracted(extractCodeAndBody(value));
+          }
+        }}
         rows={10}
       />
 

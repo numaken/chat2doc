@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       console.log('🔄 自動的にチャンク処理を実行します')
     }
 
-    // システムプロンプトを定義
+    // システムプロンプトを定義（複数AI形式に対応したコード検出強化版）
     const systemPrompt = `あなたは開発者向けの会話ログ分析AIアシスタントです。
 
 重要: 必ず有効なJSON形式でのみ応答してください。他のテキストは一切含めないでください。
@@ -126,6 +126,30 @@ export async function POST(request: NextRequest) {
 5. コード（code）: 会話中に出現した重要なコードスニペット（ファイル名も含む）
 6. 意図（intentions）: なぜその実装・設計を選んだのかの理由や背景
 7. 懸念点（concerns）: セキュリティ、パフォーマンス、保守性などの技術的な懸念事項
+
+【コード検出の強化ルール】
+以下のパターンを積極的にコードとして認識してください：
+
+■ ChatGPT形式:
+- \`\`\`javascript, \`\`\`python, \`\`\`tsx 等で囲まれたブロック
+- "以下のコードを追加してください"、"このファイルを作成します"
+- ファイル名: の後に続くコード
+
+■ Claude形式:
+- <invoke>やfunction呼び出しの実装例
+- "このようにコードを修正します"、"以下を実装しました"
+- \`\`\` で囲まれたコードブロック（言語指定なし）
+
+■ その他のAI形式:
+- インデントされたコードブロック（4スペース以上）
+- "実装", "追加", "修正", "作成", "書き換え"の動詞と組み合わさったコード
+- import文、function定義、class定義を含む行
+- ファイルパス（.js, .tsx, .py, .css等）の言及と関連するコード
+
+■ ブラウザコピー特有の形式:
+- 改行なしで連続するコード（整形前の状態）
+- 行番号が含まれているコード
+- "Copy code"ボタンでコピーされた形式
 
 応答は必ず以下の形式の有効なJSONでなければなりません。他のテキストや説明は含めないでください：
 
@@ -166,12 +190,22 @@ export async function POST(request: NextRequest) {
               role: "system",
               content: `あなたは会話ログ分析AIです。以下のJSONフォーマットでのみ応答してください。他のテキストは一切含めないでください。
 
+【コード検出強化】
+ChatGPT・Claude・その他AIの様々な形式を検出：
+- \`\`\`言語名 や \`\`\` で囲まれたブロック
+- "実装"、"追加"、"修正"等の動詞と関連するコード
+- ファイル名（.js/.tsx/.py等）の言及
+- import文、function定義、class定義
+- インデント済みコードブロック
+- 行番号付きコード
+- "Copy code"形式
+
 {
   "purpose": "1文での目的",
   "progress": ["完了事項1", "完了事項2"],
   "challenges": ["課題1", "課題2"],
   "nextActions": ["次のアクション1", "次のアクション2"],
-  "code": [],
+  "code": [{"fileName": "推測可能なファイル名", "description": "コード説明", "snippet": "コード内容"}],
   "intentions": ["意図1", "意図2"],
   "concerns": ["懸念1", "懸念2"]
 }
@@ -183,7 +217,7 @@ export async function POST(request: NextRequest) {
               content: `会話ログ（${chunks.length}個中${i + 1}番目）:\n\n${chunks[i]}`
             }
           ],
-          max_tokens: 400,
+          max_tokens: 800,
           temperature: 0.1,
         })
         
@@ -338,7 +372,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `あなたは会話ログ分析AIです。以下のJSONフォーマットでのみ応答してください。
+          content: `会話ログを分析し、以下の正確なJSON形式で応答してください。
 
 {
   "purpose": "プロジェクトの目的を1文で",
@@ -350,14 +384,14 @@ export async function POST(request: NextRequest) {
   "concerns": ["技術的懸念1", "技術的懸念2"]
 }
 
-重要: 必ず有効なJSONのみで応答し、他のテキストは一切含めないでください。`
+重要: このJSON形式のみで応答し、説明文は一切含めないでください。`
         },
         {
           role: "user", 
           content: `会話ログを分析してプロジェクト情報を抽出してください：\n\n${fullText}`
         }
       ],
-      max_tokens: 500,
+      max_tokens: 1000,
       temperature: 0.1, // より一貫性のあるJSON出力のため低めに設定
     })
 
@@ -370,9 +404,9 @@ export async function POST(request: NextRequest) {
 
     // JSONの抽出を試みる（複数パターンに対応）
     let structuredData: StructuredData
+    let jsonString = responseContent.trim()
     try {
       console.log('🔍 JSON解析開始')
-      let jsonString = responseContent.trim()
       
       // パターン1: ```json ``` で囲まれている場合
       const jsonMatch = jsonString.match(/```json\s*([\s\S]*?)\s*```/)
@@ -397,7 +431,33 @@ export async function POST(request: NextRequest) {
         console.log('📋 JSON部分を抽出:', jsonString.substring(0, 100) + '...')
       }
       
-      structuredData = JSON.parse(jsonString) as StructuredData
+      // より堅牢な JSON 解析の試行
+      try {
+        structuredData = JSON.parse(jsonString) as StructuredData
+      } catch (firstParseError) {
+        console.log('❌ 最初のJSON解析失敗、別パターンを試行')
+        
+        // 改行文字や制御文字を除去して再試行
+        const cleanedJson = jsonString
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // 制御文字を除去
+          .replace(/\n\s*\n/g, '\n') // 重複改行を除去
+          .trim()
+        
+        try {
+          structuredData = JSON.parse(cleanedJson) as StructuredData
+          console.log('✅ 2回目のJSON解析成功')
+        } catch (secondParseError) {
+          console.log('❌ 2回目も失敗、最後の手段を試行')
+          
+          // 最後の手段: 手動でJSONを修復試行
+          const fixedJson = cleanedJson
+            .replace(/,\s*}/g, '}') // 末尾のカンマを除去
+            .replace(/,\s*]/g, ']') // 配列の末尾カンマを除去
+          
+          structuredData = JSON.parse(fixedJson) as StructuredData
+          console.log('✅ 修復後のJSON解析成功')
+        }
+      }
       
       // 必要なプロパティが存在することを確認
       if (!structuredData.purpose || !Array.isArray(structuredData.progress) || 
@@ -408,6 +468,9 @@ export async function POST(request: NextRequest) {
     } catch (parseError) {
       console.error('❌ JSON解析エラー:', parseError)
       console.log('📄 元の応答:', responseContent)
+      console.log('📄 解析しようとしたJSON文字列:', jsonString)
+      console.log('📄 JSON文字列の長さ:', jsonString?.length)
+      console.log('📄 JSON文字列の最初の200文字:', jsonString?.substring(0, 200))
       
       // フォールバック: OpenAI APIレスポンスが不正な形式の場合
       console.log('⚠️ フォールバック処理: 手動での結果確認が必要')

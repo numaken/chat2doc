@@ -1,7 +1,5 @@
 'use client';
-import dynamic from 'next/dynamic';
-
-const PasteIngestor = dynamic(() => import('@/components/PasteIngestor'), { ssr: false });
+import PasteIngestor from '@/components/PasteIngestor';
 
 export default function ImportPage() {
   return (

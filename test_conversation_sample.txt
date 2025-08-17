@@ -1,0 +1,51 @@
+ユーザー: React Todoアプリにタスク削除機能を追加したいです。
+
+ChatGPT: タスク削除機能を実装するために、以下のコードをApp.jsに追加してください：
+
+```javascript
+const deleteTask = (id) => {
+  setTasks(tasks.filter(task => task.id !== id))
+}
+```
+
+そして、TodoItem.jsxコンポーネントを以下のように修正します：
+
+```jsx
+function TodoItem({ task, onDelete }) {
+  return (
+    <div className="todo-item">
+      <span>{task.text}</span>
+      <button onClick={() => onDelete(task.id)}>削除</button>
+    </div>
+  )
+}
+```
+
+ユーザー: ありがとうございます。実装できました。次にタスクの編集機能も追加したいです。
+
+Claude: タスクの編集機能を実装するには、以下のような approach を取ることをお勧めします：
+
+まず、state に編集モードを追加：
+```typescript
+const [editingId, setEditingId] = useState<string | null>(null)
+const [editText, setEditText] = useState('')
+```
+
+次に、編集用の関数を実装してください：
+
+    const startEdit = (task) => {
+      setEditingId(task.id)
+      setEditText(task.text)
+    }
+    
+    const saveEdit = () => {
+      setTasks(tasks.map(task => 
+        task.id === editingId 
+          ? { ...task, text: editText }
+          : task
+      ))
+      setEditingId(null)
+      setEditText('')
+    }
+
+ユーザー: Perfect! この実装で編集機能も動作しました。

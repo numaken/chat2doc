@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Shield, Zap, Crown } from 'lucide-react'
-import { UsageManager } from '@/lib/usageManager'
 import { useUpgrade } from '@/hooks/useUpgrade'
 
 interface UsageData {
@@ -18,13 +17,39 @@ export default function UsageIndicator() {
   const { upgradeToPremiuim, isLoading } = useUpgrade()
 
   useEffect(() => {
-    if (session?.user?.id && session?.user?.email) {
-      const usageCheck = UsageManager.canUseService(session.user.id, session.user.email)
-      setUsage({
-        count: usageCheck.usage.count,
-        plan: usageCheck.usage.plan,
-        remainingCount: usageCheck.remainingCount
-      })
+    const fetchUsage = async () => {
+      if (session?.user?.id && session?.user?.email) {
+        try {
+          const response = await fetch('/api/user-stats')
+          if (response.ok) {
+            const data = await response.json()
+            if (data.success) {
+              setUsage({
+                count: data.stats.usageCount,
+                plan: data.stats.plan,
+                remainingCount: data.stats.remainingCount
+              })
+            }
+          } else {
+            console.error('使用量取得エラー:', response.status)
+          }
+        } catch (error) {
+          console.error('使用量取得エラー:', error)
+        }
+      }
+    }
+
+    fetchUsage()
+
+    // 使用量更新イベントをリッスン
+    const handleUsageUpdate = () => {
+      fetchUsage()
+    }
+
+    window.addEventListener('usageUpdated', handleUsageUpdate)
+    
+    return () => {
+      window.removeEventListener('usageUpdated', handleUsageUpdate)
     }
   }, [session])
 

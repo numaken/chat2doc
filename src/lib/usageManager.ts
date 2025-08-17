@@ -93,9 +93,15 @@ export class UsageManager {
     return usage
   }
 
+  // サーバーサイド用メモリストレージ
+  private static serverStorage: Record<string, UserUsage> = {}
+
   // 全使用量データを取得
   private static getAllUsageData(): Record<string, UserUsage> {
-    if (typeof window === 'undefined') return {}
+    if (typeof window === 'undefined') {
+      // サーバーサイド: メモリストレージを使用
+      return this.serverStorage
+    }
     
     try {
       const data = localStorage.getItem(this.STORAGE_KEY)
@@ -107,10 +113,17 @@ export class UsageManager {
 
   // 使用量データを保存
   private static saveUserUsage(usage: UserUsage): void {
-    if (typeof window === 'undefined') return
-
-    const allData = this.getAllUsageData()
     const userKey = `${usage.userId}-${usage.month}`
+    
+    if (typeof window === 'undefined') {
+      // サーバーサイド: メモリストレージに保存
+      this.serverStorage[userKey] = usage
+      console.log('💾 サーバーサイドに使用量を保存:', { userKey, count: usage.count })
+      return
+    }
+
+    // クライアントサイド: LocalStorageに保存
+    const allData = this.getAllUsageData()
     allData[userKey] = usage
 
     try {

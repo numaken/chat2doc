@@ -1,0 +1,132 @@
+了解です 👍
+先ほどの Claude Code 向け実装指示 を .md ファイル用に整形しました。
+このままリポ直下に DEV_INSTRUCTIONS.md として追加してください。
+
+# DEV_INSTRUCTIONS.md
+
+## 概要
+このファイルは Chat2Doc β版における「全部コピペ → 本文/コードを自動分離して整形」機能の実装指示です。  
+Claude Code 等の AI コードアシスタントが参照し、実装作業を行えるよう整理しています。
+
+---
+
+## タスク概要
+- ペーストされた生テキスト（チャットのコピペ）を解析
+- 本文とコードを自動的に分離
+- Markdown 形式で整形（本文＋コード付録）
+- スマホユーザー前提の簡単 UI を提供
+
+---
+
+## 1. 依存関係
+Vitest を導入し、ユニットテストを実行可能にする。
+
+```bash
+npm i -D vitest @types/node
+
+
+package.json に追記:
+
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}
+
+2. ユーティリティ（取り込みパイプライン）
+
+新規: src/utils/ingest.ts
+
+生テキストから UI ノイズを除去
+
+インデント/シェル行コードも抽出
+
+本文/コードを分離
+
+Markdown 整形関数を提供
+
+（省略: 実装コードはこのファイルに追加する）
+
+3. ペースト UI コンポーネント
+
+新規: src/components/PasteIngestor.tsx
+
+textarea に「全部ペースト」
+
+自動で本文/コードを分離
+
+タブで切り替え表示（整形プレビュー／本文のみ／コード）
+
+コピー機能（本文／コード／Markdown全体）
+
+iOS Safari で失敗時は prompt フォールバック
+
+4. ページ追加
+
+新規: src/app/import/page.tsx
+
+/import ページを作成
+
+PasteIngestor を読み込み表示
+
+シンプルな説明文とUIを配置
+
+5. テスト
+
+新規: src/utils/ingest.test.ts
+
+フェンス付きコードの検出
+
+インデント塊の検出
+
+UIノイズの除去
+
+Markdown整形（付録の付与）
+
+6. 受け入れ基準
+
+スマホ/PC 両対応
+
+全文ペーストで本文/コード分離が自動で行われる
+
+UIノイズ（「Copy code」「Open in…」「Regenerate…」等）が本文に混入しない
+
+フェンス・インデント・シェル行 ($, PS>, #) のコード検出が機能
+
+「本文＋付録をMarkdownでコピー」ボタンが動作する（iOS Safari は prompt フォールバック）
+
+npm run test がグリーン
+
+7. コミット/PR
+
+ブランチ名: feat/mobile-paste-ingest
+
+コミット粒度:
+
+chore(test): add vitest and basic config
+
+feat(ingest): add sanitize/extract/toMarkdown pipeline
+
+feat(ui): add PasteIngestor component and /import page
+
+test(ingest): add unit tests for fences/indent/ui-noise
+
+PR タイトル:
+feat: モバイル前提の「全部コピペ→整形」β機能
+
+PR 本文: 動機、仕様、UIスクショ、テスト観点、既知の限界を簡潔に記載
+
+8. 備考
+
+リポは Next.js + TypeScript の App Router 構成。既存コードとの衝突はほぼ無い。
+
+README は最小構成のままなので、PR後に /import ページの使い方 を追記推奨。
+
+
+---
+
+👉 このファイルを `DEV_INSTRUCTIONS.md` としてリポ直下に置いてください。  
+Claude Code に「この指示ファイルに従って実装して」と伝えれば、ブランチ作成〜PRまで通せます。  
+
+ご希望なら、私の方で **実際に書き込むコード全文**（ingest.ts, PasteIngestor.tsx, page.tsx, ingest.test.ts）を `.md` に追記する版も作れます。どうしますか？

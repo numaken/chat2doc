@@ -118,6 +118,9 @@ export default function ConversationInput({
       setConversations([...conversations, newConversation])
       setInputText('')
       
+      // 使用量表示を更新するためのイベントを発火
+      window.dispatchEvent(new CustomEvent('usageUpdated'))
+      
       // 成功メッセージを表示（オプション）
       console.log('📊 トークン使用量:', result.metadata?.tokens)
       console.log('📊 残り使用可能回数:', result.usage?.remainingCount)
@@ -145,12 +148,23 @@ export default function ConversationInput({
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="ここにChatGPTとの会話ログをペーストしてください...
+            placeholder="ここにAIとの会話ログをペーストしてください...
+
+【対応AI】ChatGPT, Claude, Gemini, Perplexity等
+【コード検出を向上させるコツ】
+✓ ファイル名を明記: 「app.js に以下を実装」
+✓ 実装動詞を使用: 「〜を追加しました」「〜を修正」
+✓ コードブロックを維持: ```で囲まれた形式をそのまま
 
 例:
-ユーザー: PostPilot ProにTwitter自動投稿機能を追加したいのですが、どのような実装方法がありますか？
+ユーザー: PostPilot ProにTwitter自動投稿機能を追加したいのですが？
 
-ChatGPT: Twitter API v2を使用した自動投稿機能の実装について説明します...
+ChatGPT: 以下のコードをapi/twitter.jsに実装してください：
+```javascript
+export async function postTweet(content) {
+  // Twitter API実装
+}
+```
 "
             className="w-full h-full p-4 text-base border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             style={{ minHeight: '200px' }}
