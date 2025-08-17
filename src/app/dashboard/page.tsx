@@ -298,13 +298,30 @@ export default function Dashboard() {
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => {
-                          // アップグレードボタンの処理
-                          const upgradeButton = document.querySelector('.upgrade-button') as HTMLButtonElement
-                          if (upgradeButton) {
-                            upgradeButton.click()
-                          } else {
-                            window.location.href = '/app'
+                        onClick={async () => {
+                          try {
+                            console.log('Creating checkout session...')
+                            const response = await fetch('/api/create-checkout-session', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                            })
+                            
+                            if (response.ok) {
+                              const data = await response.json()
+                              console.log('Checkout session created:', data)
+                              if (data.checkoutUrl) {
+                                window.location.href = data.checkoutUrl
+                              }
+                            } else {
+                              const errorData = await response.json()
+                              console.error('Checkout session error:', errorData)
+                              alert('決済ページの作成に失敗しました。しばらく後にお試しください。')
+                            }
+                          } catch (error) {
+                            console.error('Upgrade error:', error)
+                            alert('エラーが発生しました。しばらく後にお試しください。')
                           }
                         }}
                         className="w-full flex items-center justify-center gap-2 bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors text-sm"

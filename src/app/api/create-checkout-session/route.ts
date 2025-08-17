@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { getStripeInstance, STRIPE_CONFIG } from '@/lib/stripe'
+import { authOptions } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   console.log('🎫 Stripe checkout session 作成開始')
@@ -8,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     // 認証チェック
     console.log('🔍 認証確認中...')
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     console.log('👤 セッション情報:', { 
       hasSession: !!session, 
       userId: session?.user?.id,
