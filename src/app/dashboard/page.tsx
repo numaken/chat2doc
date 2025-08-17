@@ -20,22 +20,36 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (session) {
+    console.log('Dashboard useEffect:', { status, session: !!session })
+    if (status === 'authenticated' && session) {
       fetchStats()
+    } else if (status === 'unauthenticated') {
+      setIsLoading(false)
     }
-  }, [session])
+  }, [session, status])
 
   const fetchStats = async () => {
     try {
+      console.log('Fetching stats for session:', session?.user?.email)
       const response = await fetch('/api/user-stats')
+      console.log('Stats API response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('Stats data received:', data)
         setStats(data.stats)
+        setError(null)
+      } else {
+        const errorData = await response.json()
+        console.error('Stats API error:', errorData)
+        setError(errorData.error || 'データの取得に失敗しました')
       }
     } catch (error) {
       console.error('統計データの取得に失敗:', error)
+      setError('ネットワークエラーが発生しました')
     } finally {
       setIsLoading(false)
     }
@@ -57,6 +71,26 @@ export default function Dashboard() {
           <Link href="/auth/signin" className="text-blue-600 hover:text-blue-700">
             ログインページへ
           </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">エラーが発生しました: {error}</p>
+          <button 
+            onClick={() => {
+              setError(null)
+              setIsLoading(true)
+              fetchStats()
+            }}
+            className="text-blue-600 hover:text-blue-700"
+          >
+            再試行
+          </button>
         </div>
       </div>
     )

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import OpenAI from 'openai'
 import { UsageManager } from '@/lib/usageManager'
+import { authOptions } from '../auth/[...nextauth]/route'
 
 interface StructuredData {
   purpose: string
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
   try {
     // 認証チェック: ログインユーザーのみAPIアクセス可能
     console.log('🔍 認証チェック中...')
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     console.log('👤 セッション情報:', { 
       hasSession: !!session, 
       userId: session?.user?.id,

@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { UsageManager } from '@/lib/usageManager'
+import { authOptions } from '../auth/[...nextauth]/route'
 
 export async function GET() {
   try {
+    console.log('User stats API called')
     // 認証チェック
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
+    console.log('Session check result:', { 
+      hasSession: !!session, 
+      hasUser: !!session?.user, 
+      hasEmail: !!session?.user?.email,
+      userId: session?.user?.id
+    })
+    
     if (!session || !session.user || !session.user.email) {
+      console.log('Authentication failed - no valid session')
       return NextResponse.json(
         { error: 'ログインが必要です。' },
         { status: 401 }
