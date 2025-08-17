@@ -36,7 +36,7 @@ function pushBlock(blocks: CodeBlock[], buffer: string, langHint?: string) {
   const code = buffer.replace(/^\n+|\n+$/g, '');
   if (!code) return;
   blocks.push({
-    id: typeof crypto !== 'undefined' && (crypto as any).randomUUID ? crypto.randomUUID() : String(blocks.length + 1),
+    id: typeof crypto !== 'undefined' && (crypto as unknown as { randomUUID?: () => string }).randomUUID ? crypto.randomUUID() : String(blocks.length + 1),
     lang: guessLang(code, langHint),
     code,
   });
@@ -47,7 +47,7 @@ export function extractCodeAndBody(rawInput: string): Extracted {
 
   const codeBlocks: CodeBlock[] = [];
   const fenceRe = /```(\w+)?\n([\s\S]*?)```/g;
-  let remainder = cleaned.replace(fenceRe, (_m, lang, code) => {
+  const remainder = cleaned.replace(fenceRe, (_m, lang, code) => {
     pushBlock(codeBlocks, code, lang);
     return '\n';
   });
