@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { BarChart, TrendingUp, Crown, Calendar, DollarSign, ArrowLeft, Settings, CreditCard, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
@@ -22,16 +22,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    console.log('Dashboard useEffect:', { status, session: !!session })
-    if (status === 'authenticated' && session) {
-      fetchStats()
-    } else if (status === 'unauthenticated') {
-      setIsLoading(false)
-    }
-  }, [session, status])
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       console.log('Fetching stats for session:', session?.user?.email)
       const response = await fetch('/api/user-stats')
@@ -53,7 +44,16 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [session?.user?.email])
+
+  useEffect(() => {
+    console.log('Dashboard useEffect:', { status, session: !!session })
+    if (status === 'authenticated' && session) {
+      fetchStats()
+    } else if (status === 'unauthenticated') {
+      setIsLoading(false)
+    }
+  }, [session, status, fetchStats])
 
   if (status === 'loading' || isLoading) {
     return (

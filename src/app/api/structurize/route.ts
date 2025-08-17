@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import OpenAI from 'openai'
 import { UsageManager } from '@/lib/usageManager'
-import { authOptions } from '../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 
 interface StructuredData {
   purpose: string
