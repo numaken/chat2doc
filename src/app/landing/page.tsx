@@ -18,20 +18,20 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-gray-900">Chat2Doc</span>
               <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">β版</span>
             </div>
-            <div className="flex items-center gap-3">
+            <nav className="flex items-center gap-4">
               <Link 
                 href="/import" 
-                className="text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
+                className="text-sm underline text-gray-600 hover:text-gray-900 transition-colors"
               >
-                整形機能
+                ログイン不要で試す
               </Link>
               <Link 
-                href="/app" 
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                href="/auth/signin" 
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
-                アプリを開く
+                ログイン
               </Link>
-            </div>
+            </nav>
           </div>
         </div>
       </header>
@@ -43,43 +43,33 @@ export default function LandingPage() {
             AI会話を<br className="hidden sm:block" />
             <span className="text-blue-600">知識資産</span>に変換
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
+          <p className="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6 max-w-3xl mx-auto px-2">
             ChatGPT・Claude・Gemini等との会話ログを構造化されたドキュメントに自動変換。<br className="hidden md:block" />
             開発プロジェクトの引き継ぎ書・仕様書・議事録として活用できます。
           </p>
-          {/* 利用方法の案内 */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-6 sm:mb-8 max-w-2xl mx-auto mx-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
-              <span className="font-semibold text-blue-800 text-sm sm:text-base">利用方法について</span>
-            </div>
-            <p className="text-blue-700 text-xs sm:text-sm">
-              <strong>ログイン：</strong>クラウド同期・共有機能が利用可能（β版）<br/>
-              <strong>未ログイン：</strong>ローカル保存のみでお試し利用
-            </p>
-          </div>
+          
+          {/* Hero 主要コピーの直下に常時注記を追加 */}
+          <p className="mt-2 text-sm text-gray-600 mb-6 sm:mb-8 max-w-4xl mx-auto px-4">
+            <strong>未ログイン：</strong>貼り付け整形だけ試すなら <Link href="/import" className="underline text-blue-600 hover:text-blue-800">お試し用ページ</Link>（ログイン不要） ／
+            <strong> ログイン：</strong> 同期・共有・履歴保存が有効（β）
+          </p>
 
+          {/* CTAボタンを2本立てに */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
             <Link 
               href="/auth/signin" 
-              className="bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base font-semibold"
             >
-              ログインして始める
+              Googleログインで始める
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
             <Link 
               href="/import" 
-              className="bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="border-2 border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              お試し利用（整形機能）
+              ログイン不要で試す
               <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
-            <button 
-              onClick={() => setShowUsageModal(true)}
-              className="border border-gray-300 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
-            >
-              使用例を見る
-            </button>
           </div>
           
           {/* デモ画像エリア */}
@@ -279,9 +269,11 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-lg shadow-sm">
               <Zap className="w-12 h-12 text-yellow-500 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">高速処理</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">選べる処理モード</h3>
               <p className="text-gray-600">
-                高速（軽量）／高精度（リッチ）モデルを選択可能。90,000文字超の長い会話も自動分割して数秒で構造化
+                <strong>高速（軽量）</strong>：コスト効率重視でスピーディに構造化 ／
+                <strong>高精度（リッチ）</strong>：詳細抽出や厳密な分類が必要な場合に。
+                <br />※ 実際のモデルは運用に応じて切り替え可能です。
               </p>
             </div>
             
