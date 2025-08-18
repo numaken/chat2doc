@@ -263,7 +263,7 @@ export default function Dashboard() {
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => window.open('https://billing.stripe.com/p/login/test_fZu8wIgjI3ih2Ou5ZvgrS00', '_blank')}
+                        onClick={() => window.open('https://billing.stripe.com/p/login/6oUdRadgX1dZfEwc1q2sM00', '_blank')}
                         className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm"
                       >
                         <CreditCard className="w-4 h-4" />
