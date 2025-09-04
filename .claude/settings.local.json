@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(npm run test:*)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Read(/Users/numaken/Development/AiTools/ext-chat2doc/**)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:chat2doc.panolabollc.com)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

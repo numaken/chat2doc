@@ -139,6 +139,11 @@ function sseEvent(event: string, data: unknown): string {
 }
 
 export async function POST(request: NextRequest) {
+  // 緊急止血: 環境変数でチャット機能を無効化
+  if (process.env.CHAT_DISABLED === '1') {
+    return new Response('Chat feature is temporarily disabled', { status: 403 });
+  }
+  
   console.log('🚀 /api/chat/stream リクエスト開始');
   
   try {
