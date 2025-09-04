@@ -181,9 +181,9 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* ヘッダー */}
-      <header className="bg-white border-b px-4 py-3 flex items-center justify-between">
+      <header className="bg-white border-b px-4 py-3 flex items-center justify-between shrink-0">
         <h1 className="text-xl font-semibold">Chat2Doc 内蔵チャット</h1>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-600">
@@ -193,7 +193,7 @@ export default function ChatPage() {
       </header>
 
       {/* モバイル用タブ */}
-      <div className="md:hidden bg-white border-b">
+      <div className="md:hidden bg-white border-b shrink-0">
         <div className="flex">
           <button
             onClick={() => setActiveTab('chat')}
@@ -219,14 +219,14 @@ export default function ChatPage() {
       </div>
 
       {/* メインコンテンツ */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* チャットパネル */}
         <div className={`${
           activeTab === 'chat' ? 'block' : 'hidden'
-        } md:block md:w-1/2 w-full flex flex-col bg-white border-r`}>
+        } md:block md:w-1/2 w-full flex flex-col bg-white border-r min-h-0`}>
           
           {/* メッセージエリア */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             {messages.length === 0 && (
               <div className="text-center text-gray-500 mt-8">
                 <div className="text-4xl mb-2">🤖</div>
@@ -288,7 +288,7 @@ export default function ChatPage() {
           </div>
 
           {/* 入力フォーム */}
-          <form onSubmit={handleSend} className="p-4 border-t bg-gray-50">
+          <form onSubmit={handleSend} className="p-4 border-t bg-gray-50 shrink-0">
             <div className="flex gap-3">
               <input
                 type="text"
@@ -312,7 +312,7 @@ export default function ChatPage() {
         {/* 構造化パネル */}
         <div className={`${
           activeTab === 'structure' ? 'block' : 'hidden'
-        } md:block md:w-1/2 w-full bg-white overflow-y-auto`}>
+        } md:block md:w-1/2 w-full bg-white overflow-y-auto min-h-0`}>
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">📝 リアルタイム構造化</h2>
