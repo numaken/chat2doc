@@ -147,9 +147,15 @@ export async function POST(request: NextRequest) {
   console.log('🚀 /api/chat/stream リクエスト開始');
   
   try {
-    // 認証チェック
+    // 認証チェック（二重チェック）
     console.log('🔍 認証チェック中...');
     const session = await getServerSession(authOptions);
+    
+    // 最終ガード: セッション必須
+    if (!session?.user?.email) {
+      console.log('❌ 未認証アクセスをブロック');
+      return new Response('Unauthorized - Login required', { status: 401 });
+    }
     console.log('👤 セッション情報:', { 
       hasSession: !!session, 
       userId: session?.user?.id,
