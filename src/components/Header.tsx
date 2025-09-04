@@ -66,6 +66,14 @@ export default function Header() {
         {status === 'authenticated' && session ? (
           <>
             <Link 
+              href="/chat" 
+              className="hidden sm:flex items-center gap-2 text-blue-100 hover:text-white px-3 py-2 rounded-lg hover:bg-white/10 backdrop-blur-sm transition-all duration-200 group"
+            >
+              <MessageSquare className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span className="text-sm font-medium">チャット</span>
+            </Link>
+            
+            <Link 
               href="/dashboard" 
               className="hidden sm:flex items-center gap-2 text-blue-100 hover:text-white px-3 py-2 rounded-lg hover:bg-white/10 backdrop-blur-sm transition-all duration-200 group"
             >
@@ -73,7 +81,15 @@ export default function Header() {
               <span className="text-sm font-medium">ダッシュボード</span>
             </Link>
             
-            {/* モバイル用ダッシュボードアイコン */}
+            {/* モバイル用アイコン */}
+            <Link 
+              href="/chat" 
+              className="sm:hidden p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
+              title="チャット"
+            >
+              <MessageSquare className="w-5 h-5" />
+            </Link>
+            
             <Link 
               href="/dashboard" 
               className="sm:hidden p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200"
@@ -121,6 +137,14 @@ export default function Header() {
                       </div>
                     )}
                   </div>
+                  <Link
+                    href="/chat"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors group"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <MessageSquare className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                    チャット
+                  </Link>
                   <Link
                     href="/dashboard"
                     className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors group"
