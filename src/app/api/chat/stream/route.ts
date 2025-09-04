@@ -217,7 +217,6 @@ export async function POST(request: NextRequest) {
           content: msg.content
         }))
       ],
-      parallel_tool_calls: false,
       max_tokens: 2000,
       temperature: 0.3
     });
